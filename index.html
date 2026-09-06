@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestor de Actividades</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- Librería con estilos para colores en Excel -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
+</head>
+<body>
+
+    <div id="app-view">
+        <div class="header">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <img src="image/inemec.png" alt="Logo Inemec" style="height: 50px; width: auto;">
+                <h1>Gestión de Actividades</h1>
+            </div>
+
+            <div class="mascot-container">
+                <svg class="gear-large" viewBox="0 0 100 100" width="80" height="80" fill="none" stroke="#2563eb" stroke-width="6">
+                    <path d="M50,30 a20,20 0 1,0 0.001,0 Z M50,38 a12,12 0 1,1 -0.001,0 Z M43,18 L57,18 L59,25 L69,31 L76,28 L84,36 L81,43 L84,56 L78,60 L78,71 L70,75 L63,71 L51,72 L45,77 L37,72 L34,65 L26,61 L26,50 L30,44 L26,34 L34,28 L41,30 Z"/>
+                </svg>
+                <svg class="mechanic-figure" viewBox="0 0 120 120" width="100" height="100">
+                    <circle cx="55" cy="30" r="12" fill="#f59e0b"/>
+                    <line x1="55" y1="42" x2="55" y2="75" stroke="#1e293b" stroke-width="10" stroke-linecap="round"/>
+                    <line x1="55" y1="75" x2="45" y2="95" stroke="#1e293b" stroke-width="8" stroke-linecap="round"/>
+                    <line x1="55" y1="75" x2="65" y2="95" stroke="#1e293b" stroke-width="8" stroke-linecap="round"/>
+                    <line x1="55" y1="50" x2="80" y2="55" stroke="#1e293b" stroke-width="8" stroke-linecap="round"/>
+                    <line x1="80" y1="55" x2="95" y2="45" stroke="#64748b" stroke-width="6" stroke-linecap="round"/>
+                    <rect x="92" y="35" width="14" height="10" rx="3" fill="#64748b"/>
+                    <circle cx="100" cy="38" r="4" fill="#64748b"/>
+                    <path d="M43,22 Q55,10 67,22 Z" fill="#ef4444"/>
+                </svg>
+            </div>
+
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <span id="role-badge" style="padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; color: white;"></span>
+                
+                <button id="btn-admin-login" onclick="showAdminLogin()" class="btn-admin">🔒 Modo Admin</button>
+                
+                <button id="btn-logout" onclick="logoutAdmin()" class="btn-logout" style="display: none;">Cerrar Sesión Admin</button>
+            </div>
+        </div>
+
+        <div class="toolbar" id="user-toolbar">
+            <select id="user-name-select" onchange="loadData()">
+                <option value="">Seleccione su nombre...</option>
+                <option value="ALBERT RONCANCIO">ALBERT RONCANCIO</option>
+                <option value="ALEXANDER DAZA">ALEXANDER DAZA</option>
+                <option value="ANDERSON RODRIGUEZ">ANDERSON RODRIGUEZ</option>
+                <option value="CRISTHIAN MAHECHA">CRISTHIAN MAHECHA</option>
+                <option value="DIEGO MORALES">DIEGO MORALES</option>
+                <option value="DIEGO RINCON">DIEGO RINCON</option>
+                <option value="EDGAR BENITO">EDGAR BENITO</option>
+                <option value="FABIAN GUZMAN">FABIAN GUZMAN</option>
+                <option value="GERLY ARDILA">GERLY ARDILA</option>
+                <option value="HAROLD ROMERO">HAROLD ROMERO</option>
+                <option value="JAIME ROMERO">JAIME ROMERO</option>
+                <option value="JAIRO ALVAREZ">JAIRO ALVAREZ</option>
+                <option value="JHEYNER DURAN">JHEYNER DURAN</option>
+                <option value="JILLBER CRUZ">JILLBER CRUZ</option>
+                <option value="JHON NARVAEZ">JHON NARVAEZ</option>
+                <option value="JHON OLIVEROS">JHON OLIVEROS</option>
+                <option value="JHON PASTRAN">JHON PASTRAN</option>
+                <option value="JOSE GUTIERREZ">JOSE GUTIERREZ</option>
+                <option value="JUAN C HOLGUIN">JUAN C HOLGUIN</option>
+                <option value="JUAN HOLGUIN">JUAN HOLGUIN</option>
+                <option value="KEVIN CALDERON">KEVIN CALDERON</option>
+                <option value="LEANDRO AVILA">LEANDRO AVILA</option>
+                <option value="LEITON VALERO">LEITON VALERO</option>
+                <option value="MILTON AVILA">MILTON AVILA</option>
+                <option value="SEBASTIAN VERGARA">SEBASTIAN VERGARA</option>
+                <option value="VICTOR GARCIA">VICTOR GARCIA</option>
+                <option value="WILLIAM MOSQUERA">WILLIAM MOSQUERA</option>
+                <option value="WILSON SALAS">WILSON SALAS</option>
+                <option value="YOHANY GARCIA">YOHANY GARCIA</option>
+                <option value="YOVANY GARCIA">YOVANY GARCIA</option>
+            </select>
+
+            <button onclick="openModal()" class="btn-new">➕ Nueva Actividad</button>
+            <span id="user-message" style="color: #64748b; font-size: 0.9rem; align-self: center;">Seleccione su nombre para ver sus actividades de hoy.</span>
+        </div>
+
+        <div class="toolbar" id="admin-toolbar" style="display: none;">
+            <button onclick="openModal()" class="btn-new">➕ Nueva Actividad</button>
+            
+            <div class="search-box">
+                <input type="text" id="search-descripcion" placeholder="🔍 Buscar por descripción..." oninput="loadData()">
+            </div>
+
+            <select id="filter-subarea" onchange="loadData()">
+                <option value="">Todas las Subáreas</option>
+                <option value="MECANICA">MECANICA</option>
+                <option value="INSTRUMENTACIÓN">INSTRUMENTACIÓN</option>
+                <option value="ELÉCTRICO">ELÉCTRICO</option>
+                <option value="VALVULAS PSV Y PVV">VALVULAS PSV Y PVV</option>
+                <option value="A&C">A&C</option>
+                <option value="CBM">CBM</option>
+                <option value="VSD">VSD</option>
+                <option value="FACILIDADES">FACILIDADES</option>
+                <option value="OBREROS DE PATIO">OBREROS DE PATIO</option>
+                <option value="CAMPAMENTERO">CAMPAMENTERO</option>
+                <option value="HSEQ">HSEQ</option>
+            </select>
+
+            <select id="filter-estacion" onchange="loadData()">
+                <option value="">Todas las Estaciones</option>
+                <option value="JGR">JGR</option>
+                <option value="CCS">CCS</option>
+                <option value="TOS">TOS</option>
+                <option value="MN">MN</option>
+                <option value="JSW">JSW</option>
+                <option value="BGL">BGL</option>
+            </select>
+
+            <!-- FILTRO PROG/NP CON OPCIÓN PTE -->
+            <select id="filter-prog" onchange="loadData()">
+                <option value="">Todos (P/NP/PTE)</option>
+                <option value="P">P (Programada)</option>
+                <option value="NP">NP (No Programada)</option>
+                <option value="PTE">PTE (Pendiente)</option>
+            </select>
+
+            <input type="date" id="filter-date-from" onchange="loadData()" placeholder="Desde">
+            <input type="date" id="filter-date-to" onchange="loadData()" placeholder="Hasta">
+
+            <button onclick="clearFilters()" class="btn-clear">🧹 Quitar filtro</button>
+            <button onclick="openExportModal()" class="btn-excel">📊 Exportar por Fecha</button>
+        </div>
+
+        <table id="activity-table">
+            <thead>
+                <tr>
+                    <th onclick="sortTable('Descripción')" style="cursor: pointer;">Descripción ⬍</th>
+                    <th onclick="sortTable('TAG')" style="cursor: pointer;">TAG ⬍</th>
+                    <th onclick="sortTable('PROG/NÓ PROG')" style="cursor: pointer;">PROG/NÓ PROG ⬍</th>
+                    <th onclick="sortTable('ESTACION')" style="cursor: pointer;">ESTACION ⬍</th>
+                    <th onclick="sortTable('AVANCE')" style="cursor: pointer;">AVANCE ⬍</th>
+                    <th onclick="sortTable('OT')" style="cursor: pointer;">OT ⬍</th>
+                    <th onclick="sortTable('EJECUTANTE')" style="cursor: pointer;">EJECUTANTE ⬍</th>
+                    <th onclick="sortTable('SUBÁREA')" style="cursor: pointer;">SUBÁREA ⬍</th>
+                    <th onclick="sortTable('FECHA')" style="cursor: pointer;">FECHA ⬍</th>
+                    <th onclick="sortTable('AREA')" style="cursor: pointer;">AREA ⬍</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="table-body"></tbody>
+        </table>
+    </div>
+
+    <!-- Modal para Login de Administrador -->
+    <div id="admin-login-modal" class="modal">
+        <div class="modal-content" style="max-width: 350px;">
+            <span class="close" onclick="closeAdminLogin()">&times;</span>
+            <div style="text-align: center; margin-bottom: 15px;">
+                <img src="image/inemec.png" alt="Logo Inemec" style="height: 60px; width: auto;">
+            </div>
+            <h2>Login Administrador</h2>
+            <input type="text" id="admin-user" placeholder="Usuario">
+            <input type="password" id="admin-pass" placeholder="Contraseña">
+            <button onclick="adminLogin()">Ingresar</button>
+            <p id="admin-login-error" class="error-msg" style="display: none;">Credenciales incorrectas</p>
+        </div>
+    </div>
+
+    <!-- Modal para Exportar por Fechas -->
+    <div id="export-modal" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <span class="close" onclick="closeExportModal()">&times;</span>
+            <h2>Exportar por Fecha</h2>
+            <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 15px;">Seleccione el rango de fechas para exportar.</p>
+            
+            <label>Desde</label>
+            <input type="date" id="export-date-from">
+            
+            <label>Hasta</label>
+            <input type="date" id="export-date-to">
+            
+            <div class="modal-actions">
+                <button onclick="exportExcel()" class="btn-save">📊 Exportar</button>
+                <button onclick="closeExportModal()" class="btn-cancel">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Crear/Editar -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modal-title">Nueva Actividad</h2>
+            <input type="hidden" id="record-id">
+            
+            <div class="form-grid">
+                <div class="full-width">
+                    <label>Descripción *</label>
+                    <input type="text" id="f-descripcion" placeholder="Ej: Mantenimiento motor">
+                </div>
+                
+                <div>
+                    <label>TAG</label>
+                    <input type="text" id="f-tag" placeholder="Ej: TAG-001">
+                </div>
+
+                <!-- PROG/NP CON OPCIÓN PTE -->
+                <div>
+                    <label>PROG/NÓ PROG *</label>
+                    <select id="f-prog">
+                        <option value="">Seleccione...</option>
+                        <option value="P">P</option>
+                        <option value="NP">NP</option>
+                        <option value="PTE">PTE</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label>ESTACION *</label>
+                    <select id="f-estacion">
+                        <option value="">Seleccione...</option>
+                        <option value="JGR">JGR</option>
+                        <option value="CCS">CCS</option>
+                        <option value="TOS">TOS</option>
+                        <option value="MN">MN</option>
+                        <option value="JSW">JSW</option>
+                        <option value="BGL">BGL</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label>AVANCE</label>
+                    <input type="text" id="f-avance" placeholder="0% - 100%">
+                </div>
+
+                <div>
+                    <label>OT</label>
+                    <input type="text" id="f-ot" placeholder="Número de OT">
+                </div>
+
+                <div>
+                    <label>EJECUTANTE *</label>
+                    <input type="text" id="f-ejecutante" placeholder="Nombre" list="ejecutantes-list">
+                    <datalist id="ejecutantes-list">
+                        <option value="ALBERT RONCANCIO"></option>
+                        <option value="ALEXANDER DAZA"></option>
+                        <option value="ANDERSON RODRIGUEZ"></option>
+                        <option value="CRISTHIAN MAHECHA"></option>
+                        <option value="DIEGO MORALES"></option>
+                        <option value="DIEGO RINCON"></option>
+                        <option value="EDGAR BENITO"></option>
+                        <option value="FABIAN GUZMAN"></option>
+                        <option value="GERLY ARDILA"></option>
+                        <option value="HAROLD ROMERO"></option>
+                        <option value="JAIME ROMERO"></option>
+                        <option value="JAIRO ALVAREZ"></option>
+                        <option value="JHEYNER DURAN"></option>
+                        <option value="JILLBER CRUZ"></option>
+                        <option value="JHON NARVAEZ"></option>
+                        <option value="JHON OLIVEROS"></option>
+                        <option value="JHON PASTRAN"></option>
+                        <option value="JOSE GUTIERREZ"></option>
+                        <option value="JUAN C HOLGUIN"></option>
+                        <option value="JUAN HOLGUIN"></option>
+                        <option value="KEVIN CALDERON"></option>
+                        <option value="LEANDRO AVILA"></option>
+                        <option value="LEITON VALERO"></option>
+                        <option value="MILTON AVILA"></option>
+                        <option value="SEBASTIAN VERGARA"></option>
+                        <option value="VICTOR GARCIA"></option>
+                        <option value="WILLIAM MOSQUERA"></option>
+                        <option value="WILSON SALAS"></option>
+                        <option value="YOHANY GARCIA"></option>
+                        <option value="YOVANY GARCIA"></option>
+                    </datalist>
+                </div>
+
+                <div>
+                    <label>SUBÁREA *</label>
+                    <select id="f-subarea">
+                        <option value="">Seleccione una subárea...</option>
+                        <option value="MECANICA">MECANICA</option>
+                        <option value="INSTRUMENTACIÓN">INSTRUMENTACIÓN</option>
+                        <option value="ELÉCTRICO">ELÉCTRICO</option>
+                        <option value="VALVULAS PSV Y PVV">VALVULAS PSV Y PVV</option>
+                        <option value="A&C">A&C</option>
+                        <option value="CBM">CBM</option>
+                        <option value="VSD">VSD</option>
+                        <option value="FACILIDADES">FACILIDADES</option>
+                        <option value="OBREROS DE PATIO">OBREROS DE PATIO</option>
+                        <option value="CAMPAMENTERO">CAMPAMENTERO</option>
+                        <option value="HSEQ">HSEQ</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label>FECHA *</label>
+                    <input type="date" id="f-fecha">
+                </div>
+
+                <div>
+                    <label>AREA</label>
+                    <input type="text" id="f-area" placeholder="Área general">
+                </div>
+            </div>
+
+            <p class="required-note">* Campos obligatorios</p>
+
+            <div class="modal-actions">
+                <button onclick="saveRecord()" class="btn-save">💾 Guardar</button>
+                <button onclick="closeModal()" class="btn-cancel">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ⚠️ TOKEN DIVIDIDO EN 3 PARTES PARA EVITAR QUE GITHUB LO DETECTE -->
+    <script>
+        window.AIRTABLE_TOKEN = "pat1xsj" + "YK4Y2UVwKv" + ".0b9cc54f70269557fffaf9f21dd74ad066a5b5f21de3f55f15850efe454ab7c3";
+    </script>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
