@@ -110,7 +110,7 @@ function logoutAdmin() {
 }
 
 // ==========================================
-// CRUD AIRTABLE - SOLO CARGA CUANDO HAY FILTROS
+// CRUD AIRTABLE - SOLO CARGA CUANDO HAY FILTROS (ORDENADO POR SUBÁREA)
 // ==========================================
 async function loadData() {
     const subareaFilter = isAdmin ? document.getElementById('filter-subarea').value : '';
@@ -163,6 +163,32 @@ async function loadData() {
             }
             
             const data = await response.json();
+            
+            // ✅ ORDENAR POR SUBÁREA (SEGÚN EL ORDEN EXACTO DE ÁREAS)
+            const subareasOrder = [
+                "MECANICA",
+                "INSTRUMENTACIÓN",
+                "ELÉCTRICO",
+                "VALVULAS PSV Y PVV",
+                "A&C",
+                "CBM",
+                "VSD",
+                "FACILIDADES",
+                "OBREROS DE PATIO",
+                "CAMPAMENTERO",
+                "HSEQ"
+            ];
+            
+            data.records.sort((a, b) => {
+                const subA = (a.fields['SUBÁREA'] || '').toUpperCase().trim();
+                const subB = (b.fields['SUBÁREA'] || '').toUpperCase().trim();
+                const indexA = subareasOrder.indexOf(subA);
+                const indexB = subareasOrder.indexOf(subB);
+                if (indexA === -1) return 1; // Si no está en la lista, va al final
+                if (indexB === -1) return -1;
+                return indexA - indexB;
+            });
+            
             allRecords = data.records;
             
             if (sortState.field) {
@@ -386,7 +412,7 @@ async function deleteRecord(id) {
 }
 
 // ==========================================
-// EXPORTAR POR FECHA (TODAS LAS CELDAS CON BORDE NEGRO)
+// EXPORTAR POR FECHA (CON BLOQUES DE 10 FILAS POR ÁREA)
 // ==========================================
 function openExportModal() {
     document.getElementById('export-date-from').value = '';
@@ -434,7 +460,7 @@ function exportExcel() {
             return;
         }
         
-        // ✅ ORDENAR POR ÁREA
+        // ✅ ORDEN EXACTO DE ÁREAS
         const subareasOrder = [
             "MECANICA",
             "INSTRUMENTACIÓN",
@@ -449,59 +475,81 @@ function exportExcel() {
             "HSEQ"
         ];
         
-        const records = data.records;
+        // ✅ FILAS RESERVADAS POR ÁREA
+        const rowsPerArea = 10;
         
-        // Ordenar registros por subárea según el orden establecido
-        records.sort((a, b) => {
-            const subA = (a.fields['SUBÁREA'] || '').toUpperCase();
-            const subB = (b.fields['SUBÁREA'] || '').toUpperCase();
-            const indexA = subareasOrder.indexOf(subA);
-            const indexB = subareasOrder.indexOf(subB);
-            if (indexA === -1) return 1;
-            if (indexB === -1) return -1;
-            return indexA - indexB;
+        // ✅ AGRUPAR REGISTROS POR ÁREA
+        const groupedData = {};
+        subareasOrder.forEach(area => {
+            groupedData[area] = [];
+        });
+        
+        // Separar registros por área
+        data.records.forEach(rec => {
+            const subarea = (rec.fields['SUBÁREA'] || '').toUpperCase().trim();
+            if (groupedData[subarea]) {
+                groupedData[subarea].push(rec);
+            } else {
+                // Si no está en la lista, ir al final
+                if (!groupedData["SIN ÁREA"]) groupedData["SIN ÁREA"] = [];
+                groupedData["SIN ÁREA"].push(rec);
+            }
         });
         
         // ✅ CREAR LA ESTRUCTURA DE LA HOJA (AOA: Array of Arrays)
         // Fila 0: FECHA
         // Fila 1: Encabezados
-        // Fila 2 en adelante: Datos
+        // Fila 2 en adelante: Datos con bloques de 10 filas
         
         const exportDate = new Date().toLocaleDateString('es-ES'); // Ej: 31/08/2026
         
         const headers = ["AREA", "AREA O SISTEMA", "DESCRIPCION DE ACTIVIDAD", "TAG", "PROG/NO PROG", "ESTACION", "AVANCE", "OT", "EJECUTANTE"];
         
-        // Crear matriz de datos
-        const dataRows = [];
+        // Construir la matriz de datos (AOA)
+        const aoaData = [["FECHA", exportDate], headers];
         
-        records.forEach(rec => {
-            const f = rec.fields;
-            const subarea = (f['SUBÁREA'] || '').toUpperCase();
-            const row = [
-                subarea, // Columna 0: AREA
-                (f['AREA'] || '').toUpperCase(), // Columna 1
-                (f['Descripción'] || '').toUpperCase(), // Columna 2
-                (f['TAG'] || '').toUpperCase(), // Columna 3
-                (f['PROG/NÓ PROG'] || '').toUpperCase(), // Columna 4
-                (f['ESTACION'] || '').toUpperCase(), // Columna 5
-                (f['AVANCE'] || '').toUpperCase(), // Columna 6
-                (f['OT'] || '').toUpperCase(), // Columna 7
-                (f['EJECUTANTE'] || '').toUpperCase() // Columna 8
-            ];
-            dataRows.push(row);
+        // ✅ Llenar bloques por área
+        subareasOrder.forEach(area => {
+            const recordsOfArea = groupedData[area] || [];
+            
+            // Determinar cuántas filas usar (mínimo 10, o más si hay más actividades)
+            const totalRows = Math.max(rowsPerArea, recordsOfArea.length);
+            
+            // Llenar las filas (de 1 a totalRows)
+            for (let i = 0; i < totalRows; i++) {
+                const rec = recordsOfArea[i];
+                const row = [];
+                
+                if (rec) {
+                    const f = rec.fields;
+                    row.push(area); // Columna 0: AREA
+                    row.push((f['AREA'] || '').toUpperCase()); // Columna 1
+                    row.push((f['Descripción'] || '').toUpperCase()); // Columna 2
+                    row.push((f['TAG'] || '').toUpperCase()); // Columna 3
+                    row.push((f['PROG/NÓ PROG'] || '').toUpperCase()); // Columna 4
+                    row.push((f['ESTACION'] || '').toUpperCase()); // Columna 5
+                    row.push((f['AVANCE'] || '').toUpperCase()); // Columna 6
+                    row.push((f['OT'] || '').toUpperCase()); // Columna 7
+                    row.push((f['EJECUTANTE'] || '').toUpperCase()); // Columna 8
+                } else {
+                    // Filas vacías (quedan los bordes y el fondo blanco)
+                    row.push(area); // Columna 0: AREA (sigue siendo el área)
+                    row.push(''); // Columna 1
+                    row.push(''); // Columna 2
+                    row.push(''); // Columna 3
+                    row.push(''); // Columna 4
+                    row.push(''); // Columna 5
+                    row.push(''); // Columna 6
+                    row.push(''); // Columna 7
+                    row.push(''); // Columna 8
+                }
+                
+                aoaData.push(row);
+            }
         });
         
         // ✅ CREAR HOJA CON XLSX.utils.aoa_to_sheet
-        const ws = XLSX.utils.aoa_to_sheet([]);
-        
-        // Agregar Fila de FECHA (Fila 1)
-        XLSX.utils.sheet_add_aoa(ws, [["FECHA", exportDate]], { origin: "A1" });
-        
-        // Agregar Encabezados (Fila 2)
-        XLSX.utils.sheet_add_aoa(ws, [headers], { origin: "A2" });
-        
-        // Agregar Datos (Fila 3 en adelante)
-        XLSX.utils.sheet_add_aoa(ws, dataRows, { origin: "A3" });
+        const ws = XLSX.utils.aoa_to_sheet(aoaData);
         
         // ✅ BORDES NEGROS PARA TODAS LAS CELDAS
         const borderStyle = {
@@ -536,58 +584,39 @@ function exportExcel() {
             };
         });
         
-        // ✅ AGRUPAR POR ÁREA (COMBINAR CELDAS DE LA COLUMNA A POR CADA ÁREA)
-        let groupStartRow = 2; // La primera fila de datos es la fila 2 (índice 0-based)
-        let currentArea = dataRows[0][0];
+        // ✅ AGREGAR BLOQUES DE ÁREA (COMBINAR CELDAS DE LA COLUMNA A POR CADA ÁREA)
+        let areaStartRow = 2; // Después del encabezado
+        let currentArea = subareasOrder[0];
         
-        for (let i = 1; i <= dataRows.length; i++) {
-            const rowData = dataRows[i];
-            const nextArea = rowData ? rowData[0] : null;
+        for (let i = 0; i < subareasOrder.length; i++) {
+            const area = subareasOrder[i];
+            const recordsOfArea = groupedData[area] || [];
+            const totalRows = Math.max(rowsPerArea, recordsOfArea.length);
             
-            if (nextArea !== currentArea || i === dataRows.length) {
-                const groupEndRow = i - 1; // Última fila del grupo actual
-                
-                if (groupEndRow >= groupStartRow) {
-                    // Combinar celdas desde groupStartRow hasta groupEndRow en columna 0
-                    const startCell = XLSX.utils.encode_cell({ r: groupStartRow, c: 0 });
-                    const endCell = XLSX.utils.encode_cell({ r: groupEndRow, c: 0 });
-                    
-                    // Aplicar fusión
-                    ws['!merges'] = ws['!merges'] || [];
-                    ws['!merges'].push({ s: { r: groupStartRow, c: 0 }, e: { r: groupEndRow, c: 0 } });
-                    
-                    // Pintar la celda combinada en rojo con texto blanco
-                    const firstCell = XLSX.utils.encode_cell({ r: groupStartRow, c: 0 });
-                    if (ws[firstCell]) {
-                        ws[firstCell].s = {
-                            fill: { fgColor: { rgb: "FF0000" } },
-                            font: { color: { rgb: "FFFFFF" }, bold: true, size: 10 },
-                            alignment: { horizontal: "center", vertical: "center", wrapText: true },
-                            border: borderStyle
-                        };
-                    }
+            const areaEndRow = areaStartRow + totalRows - 1;
+            
+            // Combinar celdas en la columna A para el área
+            ws['!merges'] = ws['!merges'] || [];
+            ws['!merges'].push({ s: { r: areaStartRow, c: 0 }, e: { r: areaEndRow, c: 0 } });
+            
+            // Pintar las celdas de la columna A en rojo con texto blanco
+            for (let r = areaStartRow; r <= areaEndRow; r++) {
+                const cell = XLSX.utils.encode_cell({ r: r, c: 0 });
+                if (ws[cell]) {
+                    ws[cell].s = {
+                        fill: { fgColor: { rgb: "FF0000" } },
+                        font: { color: { rgb: "FFFFFF" }, bold: true, size: 10 },
+                        alignment: { horizontal: "center", vertical: "center", wrapText: true },
+                        border: borderStyle
+                    };
                 }
-                
-                groupStartRow = i;
-                currentArea = nextArea;
             }
-        }
-        
-        // ✅ PINTAR TODA LA COLUMNA A (datos y combinadas) EN ROJO Y TEXTO BLANCO
-        for (let r = 2; r < 2 + dataRows.length; r++) {
-            const cell = XLSX.utils.encode_cell({ r: r, c: 0 });
-            if (ws[cell]) {
-                ws[cell].s = {
-                    fill: { fgColor: { rgb: "FF0000" } },
-                    font: { color: { rgb: "FFFFFF" }, bold: true, size: 10 },
-                    alignment: { horizontal: "center", vertical: "center", wrapText: true },
-                    border: borderStyle
-                };
-            }
+            
+            areaStartRow = areaEndRow + 1;
         }
         
         // ✅ BORDES PARA TODAS LAS CELDAS DE DATOS (columnas B a I)
-        for (let r = 2; r < 2 + dataRows.length; r++) {
+        for (let r = 2; r < aoaData.length; r++) {
             for (let c = 1; c < 9; c++) {
                 const cell = XLSX.utils.encode_cell({ r: r, c: c });
                 if (ws[cell]) {
@@ -633,4 +662,35 @@ function exportExcel() {
         console.error(error);
         alert('Error al exportar los datos.');
     });
+}
+
+// ==========================================
+// CÓDIGO QR (GENERADO CON IMAGEN EXTERNA)
+// ==========================================
+function showQRModal() {
+    document.getElementById('qr-modal').style.display = 'flex';
+    
+    // URL de la app (se actualiza automáticamente)
+    const appUrl = window.location.origin + window.location.pathname;
+    
+    // Genera la imagen del QR usando la API pública de qrserver.com
+    const qrImg = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(appUrl)}" alt="QR Code" style="width: 250px; height: 250px;">`;
+    
+    // Muestra la imagen en el modal
+    document.getElementById('qr-code').innerHTML = qrImg;
+}
+
+function closeQRModal() {
+    document.getElementById('qr-modal').style.display = 'none';
+}
+
+function downloadQR() {
+    // Descarga la imagen del QR desde la API (convierte la imagen en descargable)
+    const appUrl = window.location.origin + window.location.pathname;
+    const url = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(appUrl)}`;
+    
+    const link = document.createElement('a');
+    link.download = 'QR_App_GestionActividades.png';
+    link.href = url;
+    link.click();
 }

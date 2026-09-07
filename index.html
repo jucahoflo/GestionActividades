@@ -114,7 +114,6 @@
                 <option value="BGL">BGL</option>
             </select>
 
-            <!-- FILTRO PROG/NP CON OPCIÓN PTE -->
             <select id="filter-prog" onchange="loadData()">
                 <option value="">Todos (P/NP/PTE)</option>
                 <option value="P">P (Programada)</option>
@@ -127,6 +126,7 @@
 
             <button onclick="clearFilters()" class="btn-clear">🧹 Quitar filtro</button>
             <button onclick="openExportModal()" class="btn-excel">📊 Exportar por Fecha</button>
+            <button onclick="showQRModal()" class="btn-qr">📱 Ver QR</button>
         </div>
 
         <table id="activity-table">
@@ -184,6 +184,22 @@
         </div>
     </div>
 
+    <!-- Modal para Código QR -->
+    <div id="qr-modal" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <span class="close" onclick="closeQRModal()">&times;</span>
+            <h2>📱 Código QR</h2>
+            <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 15px;">Escanea este código para abrir la app desde tu celular.</p>
+            <div style="text-align: center; margin-bottom: 15px;">
+                <div id="qr-code"></div>
+            </div>
+            <div class="modal-actions">
+                <button onclick="downloadQR()" class="btn-save">⬇️ Descargar QR</button>
+                <button onclick="closeQRModal()" class="btn-cancel">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal Crear/Editar -->
     <div id="modal" class="modal">
         <div class="modal-content">
@@ -202,7 +218,6 @@
                     <input type="text" id="f-tag" placeholder="Ej: TAG-001">
                 </div>
 
-                <!-- PROG/NP CON OPCIÓN PTE -->
                 <div>
                     <label>PROG/NÓ PROG *</label>
                     <select id="f-prog">

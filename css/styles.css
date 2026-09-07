@@ -84,6 +84,7 @@ button:hover { transform: translateY(-2px); }
 .toolbar button { width: auto; }
 .btn-new { background: var(--success); color: white; }
 .btn-excel { background: var(--secondary); color: white; }
+.btn-qr { background: var(--warning); color: white; }
 .btn-clear { background: #f3f4f6; color: #333; border: 1px solid #ccc; padding: 10px 15px; }
 .btn-clear:hover { background: #e2e8f0; }
 
