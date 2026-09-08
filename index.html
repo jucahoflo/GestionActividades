@@ -115,10 +115,9 @@
             </select>
 
             <select id="filter-prog" onchange="loadData()">
-                <option value="">Todos (P/NP/PTE)</option>
+                <option value="">Todos (P/NP)</option>
                 <option value="P">P (Programada)</option>
                 <option value="NP">NP (No Programada)</option>
-                <option value="PTE">PTE (Pendiente)</option>
             </select>
 
             <input type="date" id="filter-date-from" onchange="loadData()" placeholder="Desde">
@@ -224,7 +223,6 @@
                         <option value="">Seleccione...</option>
                         <option value="P">P</option>
                         <option value="NP">NP</option>
-                        <option value="PTE">PTE</option>
                     </select>
                 </div>
                 
@@ -241,51 +239,31 @@
                     </select>
                 </div>
 
+                <!-- AVANCE: Solo números con % automático -->
                 <div>
-                    <label>AVANCE</label>
-                    <input type="text" id="f-avance" placeholder="0% - 100%">
+                    <label>AVANCE *</label>
+                    <input type="text" id="f-avance" placeholder="Ej: 75" maxlength="3" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 3);">
                 </div>
 
+                <!-- OT: Input normal con menú desplegable SOLO PTE -->
                 <div>
-                    <label>OT</label>
-                    <input type="text" id="f-ot" placeholder="Número de OT">
+                    <label>OT *</label>
+                    <div style="position: relative;">
+                        <input type="text" id="f-ot" placeholder="Ej: 12345" style="padding-right: 40px;">
+                        <button type="button" onclick="toggleOTList()" 
+                            style="position: absolute; right: 5px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 14px;">
+                            ▼
+                        </button>
+                        <div id="ot-dropdown" style="display: none; position: absolute; top: 100%; left: 0; width: 100%; background: white; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); z-index: 1000;">
+                            <div onclick="selectOT('PTE')" style="padding: 10px; cursor: pointer; border-bottom: 1px solid #eee;">PTE</div>
+                        </div>
+                    </div>
                 </div>
 
+                <!-- EJECUTANTES: Escribir uno por línea -->
                 <div>
-                    <label>EJECUTANTE *</label>
-                    <input type="text" id="f-ejecutante" placeholder="Nombre" list="ejecutantes-list">
-                    <datalist id="ejecutantes-list">
-                        <option value="ALBERT RONCANCIO"></option>
-                        <option value="ALEXANDER DAZA"></option>
-                        <option value="ANDERSON RODRIGUEZ"></option>
-                        <option value="CRISTHIAN MAHECHA"></option>
-                        <option value="DIEGO MORALES"></option>
-                        <option value="DIEGO RINCON"></option>
-                        <option value="EDGAR BENITO"></option>
-                        <option value="FABIAN GUZMAN"></option>
-                        <option value="GERLY ARDILA"></option>
-                        <option value="HAROLD ROMERO"></option>
-                        <option value="JAIME ROMERO"></option>
-                        <option value="JAIRO ALVAREZ"></option>
-                        <option value="JHEYNER DURAN"></option>
-                        <option value="JILLBER CRUZ"></option>
-                        <option value="JHON NARVAEZ"></option>
-                        <option value="JHON OLIVEROS"></option>
-                        <option value="JHON PASTRAN"></option>
-                        <option value="JOSE GUTIERREZ"></option>
-                        <option value="JUAN C HOLGUIN"></option>
-                        <option value="JUAN HOLGUIN"></option>
-                        <option value="KEVIN CALDERON"></option>
-                        <option value="LEANDRO AVILA"></option>
-                        <option value="LEITON VALERO"></option>
-                        <option value="MILTON AVILA"></option>
-                        <option value="SEBASTIAN VERGARA"></option>
-                        <option value="VICTOR GARCIA"></option>
-                        <option value="WILLIAM MOSQUERA"></option>
-                        <option value="WILSON SALAS"></option>
-                        <option value="YOHANY GARCIA"></option>
-                        <option value="YOVANY GARCIA"></option>
-                    </datalist>
+                    <label>EJECUTANTES (Escriba uno por línea) *</label>
+                    <textarea id="f-ejecutante" rows="5" placeholder="Escriba un nombre por línea...&#10;Ej:&#10;ALBERT RONCANCIO&#10;WILSON SALAS"></textarea>
                 </div>
 
                 <div>
@@ -308,7 +286,7 @@
 
                 <div>
                     <label>FECHA *</label>
-                    <input type="date" id="f-fecha">
+                    <input type="date" id="f-fecha" readonly>
                 </div>
 
                 <div>

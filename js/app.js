@@ -25,7 +25,7 @@ window.onload = function() {
     document.getElementById('role-badge').style.background = '#64748b';
     
     // Configurar los inputs de texto para que conviertan a mayúsculas mientras se escribe
-    const textInputs = ['f-descripcion', 'f-tag', 'f-avance', 'f-ot', 'f-area', 'f-ejecutante'];
+    const textInputs = ['f-descripcion', 'f-tag', 'f-avance', 'f-ot', 'f-area'];
     textInputs.forEach(id => {
         const input = document.getElementById(id);
         if (input) {
@@ -213,13 +213,20 @@ function renderTable(records) {
     
     records.forEach(rec => {
         const f = rec.fields;
+        
+        // ✅ OBTENER AVANCE Y AGREGAR % AUTOMÁTICAMENTE EN PANTALLA
+        let avance = (f['AVANCE'] || '').toUpperCase();
+        if (avance !== '' && !avance.includes('%')) {
+            avance = avance + '%';
+        }
+        
         const row = `
         <tr>
             <td>${f['Descripción'] ? f['Descripción'].toUpperCase() : ''}</td>
             <td>${f['TAG'] ? f['TAG'].toUpperCase() : ''}</td>
             <td>${f['PROG/NÓ PROG'] ? f['PROG/NÓ PROG'].toUpperCase() : ''}</td>
             <td>${f['ESTACION'] ? f['ESTACION'].toUpperCase() : ''}</td>
-            <td>${f['AVANCE'] ? f['AVANCE'].toUpperCase() : ''}</td>
+            <td>${avance}</td>
             <td>${f['OT'] ? f['OT'].toUpperCase() : ''}</td>
             <td>${f['EJECUTANTE'] ? f['EJECUTANTE'].toUpperCase() : ''}</td>
             <td>${f['SUBÁREA'] ? f['SUBÁREA'].toUpperCase() : ''}</td>
@@ -288,22 +295,31 @@ function openModal() {
     document.getElementById('modal-title').innerText = 'Nueva Actividad';
     document.getElementById('record-id').value = '';
     
+    // ⚠️ AUTOMÁTICO: Fecha de hoy sin digitar
+    document.getElementById('f-fecha').value = new Date().toISOString().split('T')[0];
+    document.getElementById('f-fecha').readOnly = true; // Bloquear para que no se edite
+    
+    // Limpiar otros campos
     const textInputs = ['f-descripcion', 'f-tag', 'f-avance', 'f-ot', 'f-area'];
     textInputs.forEach(id => document.getElementById(id).value = '');
     
     document.getElementById('f-prog').value = '';
     document.getElementById('f-estacion').value = '';
-    document.getElementById('f-ejecutante').value = '';
     document.getElementById('f-subarea').value = '';
-    document.getElementById('f-fecha').value = '';
     
+    // Limpiar campo de ejecutantes
+    document.getElementById('f-ejecutante').value = '';
+    
+    // Si es usuario normal, pre-seleccionar su nombre
     if (!isAdmin) {
         const selectedUser = document.getElementById('user-name-select').value;
         if (selectedUser) {
             document.getElementById('f-ejecutante').value = selectedUser;
-            document.getElementById('f-fecha').value = new Date().toISOString().split('T')[0];
         }
     }
+    
+    // Cerrar el menú de OT si estaba abierto
+    document.getElementById('ot-dropdown').style.display = 'none';
     
     document.getElementById('modal').style.display = 'flex';
 }
@@ -323,7 +339,8 @@ function editRecord(id) {
         document.getElementById('f-ot').value = f['OT'] ? f['OT'].toUpperCase() : '';
         document.getElementById('f-ejecutante').value = f['EJECUTANTE'] ? f['EJECUTANTE'].toUpperCase() : '';
         document.getElementById('f-subarea').value = f['SUBÁREA'] ? f['SUBÁREA'].toUpperCase() : '';
-        document.getElementById('f-fecha').value = f['FECHA'] || '';
+        document.getElementById('f-fecha').value = f['FECHA'] || new Date().toISOString().split('T')[0];
+        document.getElementById('f-fecha').readOnly = true; // Bloquear edición
         document.getElementById('f-area').value = f['AREA'] ? f['AREA'].toUpperCase() : '';
         document.getElementById('modal').style.display = 'flex';
     });
@@ -334,18 +351,43 @@ function closeModal() {
 }
 
 // ==========================================
+// MENÚ DESPLEGABLE PARA OT (SOLO PTE)
+// ==========================================
+function toggleOTList() {
+    const dropdown = document.getElementById('ot-dropdown');
+    dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+}
+
+function selectOT(valor) {
+    document.getElementById('f-ot').value = valor;
+    document.getElementById('ot-dropdown').style.display = 'none';
+}
+
+// Cerrar el menú si el usuario hace clic fuera
+document.addEventListener('click', function(event) {
+    const dropdown = document.getElementById('ot-dropdown');
+    const inputOT = document.getElementById('f-ot');
+    if (dropdown && !dropdown.contains(event.target) && !inputOT.contains(event.target)) {
+        dropdown.style.display = 'none';
+    }
+});
+
+// ==========================================
 // VALIDACIÓN
 // ==========================================
 function validateForm() {
     const descripcion = document.getElementById('f-descripcion').value.trim().toUpperCase();
     const prog = document.getElementById('f-prog').value;
     const estacion = document.getElementById('f-estacion').value;
-    const ejecutante = document.getElementById('f-ejecutante').value.trim().toUpperCase();
     const subarea = document.getElementById('f-subarea').value;
     const fecha = document.getElementById('f-fecha').value;
-
-    if (!descripcion || !prog || !estacion || !ejecutante || !subarea || !fecha) {
-        alert('Por favor, completa los campos obligatorios: Descripción, PROG/NP, Estación, Ejecutante, Subárea y Fecha.');
+    const ot = document.getElementById('f-ot').value.trim();
+    
+    // Verificar que haya al menos un ejecutante escrito
+    const ejecutantesTexto = document.getElementById('f-ejecutante').value.trim();
+    
+    if (!descripcion || !prog || !estacion || !subarea || !fecha || !ot || !ejecutantesTexto) {
+        alert('Por favor, completa los campos obligatorios: Descripción, PROG/NP, Estación, OT, Ejecutante, Subárea y Fecha.');
         return false;
     }
     return true;
@@ -358,14 +400,28 @@ async function saveRecord() {
     if (!validateForm()) return;
 
     const id = document.getElementById('record-id').value;
+    
+    // Obtener los ejecutantes desde el textarea (uno por línea)
+    const ejecutantesTexto = document.getElementById('f-ejecutante').value
+        .split('\n')
+        .map(nombre => nombre.trim().toUpperCase())
+        .filter(nombre => nombre !== '')
+        .join('\n'); // Se guarda con saltos de línea
+    
+    // Obtener el avance y agregar el % automáticamente
+    let avance = document.getElementById('f-avance').value.trim();
+    if (avance !== '' && !avance.includes('%')) {
+        avance = avance + '%';
+    }
+    
     const fields = {
         "Descripción": document.getElementById('f-descripcion').value.trim().toUpperCase(),
         "TAG": document.getElementById('f-tag').value.trim().toUpperCase(),
         "PROG/NÓ PROG": document.getElementById('f-prog').value,
         "ESTACION": document.getElementById('f-estacion').value,
-        "AVANCE": document.getElementById('f-avance').value.trim().toUpperCase(),
+        "AVANCE": avance,
         "OT": document.getElementById('f-ot').value.trim().toUpperCase(),
-        "EJECUTANTE": document.getElementById('f-ejecutante').value.trim().toUpperCase(),
+        "EJECUTANTE": ejecutantesTexto,
         "SUBÁREA": document.getElementById('f-subarea').value,
         "FECHA": document.getElementById('f-fecha').value,
         "AREA": document.getElementById('f-area').value.trim().toUpperCase()
@@ -530,7 +586,11 @@ function exportExcel() {
                     row.push((f['ESTACION'] || '').toUpperCase()); // Columna 5
                     row.push((f['AVANCE'] || '').toUpperCase()); // Columna 6
                     row.push((f['OT'] || '').toUpperCase()); // Columna 7
-                    row.push((f['EJECUTANTE'] || '').toUpperCase()); // Columna 8
+                    
+                    // ✅ EJECUTANTE CON SALTO DE LÍNEA
+                    const ejecutantes = (f['EJECUTANTE'] || '').toUpperCase();
+                    const ejecutantesConSaltos = ejecutantes.replace(/;/g, '\n'); // Si venía con ";" se convierte en salto de línea
+                    row.push(ejecutantesConSaltos); // Columna 8
                 } else {
                     // Filas vacías (quedan los bordes y el fondo blanco)
                     row.push(area); // Columna 0: AREA (sigue siendo el área)
@@ -640,7 +700,7 @@ function exportExcel() {
             5: 15, // ESTACION
             6: 15, // AVANCE
             7: 15, // OT
-            8: 20  // EJECUTANTE
+            8: 25  // EJECUTANTE
         };
         
         const cols = [];
