@@ -1,5 +1,4 @@
 // CONFIGURACIÓN AIRTABLE
-// El token se lee desde el HTML (window.AIRTABLE_TOKEN) para que GitHub no lo detecte
 const API_TOKEN = window.AIRTABLE_TOKEN || '';
 const BASE_ID = 'appNFr6ryy3Sx1qlF';
 const TABLE_NAME = 'Actividades';
@@ -35,12 +34,42 @@ window.onload = function() {
         }
     });
     
+    // ✅ AGREGAR EVENTO AL BOTÓN ▼ PARA ABRIR EL MENÚ DE OT
+    document.getElementById('btn-ot-toggle').addEventListener('click', function() {
+        document.getElementById('ot-dropdown').style.display = 'block';
+    });
+    
     renderTable([]);
     
     if (localStorage.getItem('isAdminLoggedIn') === 'true') {
         adminLoginSuccess();
     }
 };
+
+// ==========================================
+// AYUDA EN CAMPOS DEL FORMULARIO
+// ==========================================
+function showFieldHelp(field) {
+    const helpTexts = {
+        'descripcion': 'Escribe una descripción clara y concisa de la actividad a realizar. Ej: "Mantenimiento preventivo motor".',
+        'tag': 'Escribe el TAG identificador del equipo. Ej: TAG-001.',
+        'prog': 'Selecciona P si es una actividad Programada, o NP si es No Programada.',
+        'estacion': 'Selecciona la estación donde se realizará la actividad. Ej: JGR, CCS, etc.',
+        'avance': 'Escribe el porcentaje de avance (solo números del 0 al 100). Se agregará automáticamente el símbolo %.',
+        'ot': 'Escribe la Orden de Trabajo (OT). Puedes seleccionar PTE si está pendiente.',
+        'ejecutante': 'Escribe los nombres de los ejecutantes, uno por línea. Ej: ALBERT RONCANCIO, WILSON SALAS.',
+        'subarea': 'Selecciona la subárea a la que pertenece la actividad.',
+        'fecha': 'La fecha se llena automáticamente con la fecha de hoy. No se puede modificar.',
+        'area': 'Escribe el área o sistema general al que pertenece la actividad.'
+    };
+
+    document.getElementById('field-help-text').innerText = helpTexts[field] || 'Este campo es obligatorio.';
+    document.getElementById('field-help-modal').style.display = 'flex';
+}
+
+function closeFieldHelp() {
+    document.getElementById('field-help-modal').style.display = 'none';
+}
 
 // ==========================================
 // ADMIN LOGIN
@@ -104,13 +133,55 @@ function logoutAdmin() {
     document.getElementById('filter-prog').value = '';
     document.getElementById('filter-date-from').value = '';
     document.getElementById('filter-date-to').value = '';
-    document.getElementById('user-name-select').value = '';
+    
+    // LIMPIAR FILTROS DE USUARIO NORMAL
+    document.getElementById('user-filter-subarea').value = '';
+    document.getElementById('user-date-from').value = '';
+    document.getElementById('user-date-to').value = '';
     
     renderTable([]);
 }
 
 // ==========================================
-// CRUD AIRTABLE - SOLO CARGA CUANDO HAY FILTROS (ORDENADO POR SUBÁREA)
+// MENÚ DE FILTROS COLABSABLE EN MÓVIL
+// ==========================================
+function toggleMobileFilters(role) {
+    if (role === 'user') {
+        const content = document.getElementById('user-filters-content');
+        content.classList.toggle('hidden');
+    } else if (role === 'admin') {
+        const content = document.getElementById('admin-filters-content');
+        content.classList.toggle('hidden');
+    }
+}
+
+// ==========================================
+// AYUDA PARA USUARIO NORMAL
+// ==========================================
+function showHelpModal() {
+    document.getElementById('help-modal').style.display = 'flex';
+}
+
+function closeHelpModal() {
+    document.getElementById('help-modal').style.display = 'none';
+}
+
+function clearUserFilters() {
+    document.getElementById('user-filter-subarea').value = '';
+    document.getElementById('user-date-from').value = '';
+    document.getElementById('user-date-to').value = '';
+    loadData();
+}
+
+function setTodayFilter() {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('user-date-from').value = today;
+    document.getElementById('user-date-to').value = today;
+    loadData();
+}
+
+// ==========================================
+// CRUD AIRTABLE - SOLO CARGA CUANDO HAY FILTROS
 // ==========================================
 async function loadData() {
     const subareaFilter = isAdmin ? document.getElementById('filter-subarea').value : '';
@@ -120,8 +191,10 @@ async function loadData() {
     const dateFrom = isAdmin ? document.getElementById('filter-date-from').value : '';
     const dateTo = isAdmin ? document.getElementById('filter-date-to').value : '';
     
-    const userName = isAdmin ? '' : document.getElementById('user-name-select').value;
-    const today = new Date().toISOString().split('T')[0];
+    // ✅ DATOS DEL USUARIO NORMAL (Subárea + Rango de fechas)
+    const userSubareaFilter = isAdmin ? '' : document.getElementById('user-filter-subarea').value;
+    const userDateFrom = isAdmin ? '' : document.getElementById('user-date-from').value;
+    const userDateTo = isAdmin ? '' : document.getElementById('user-date-to').value;
     
     let conditions = [];
     
@@ -133,13 +206,10 @@ async function loadData() {
         if (dateFrom) conditions.push(`{FECHA} >= '${dateFrom}'`);
         if (dateTo) conditions.push(`{FECHA} <= '${dateTo}'`);
     } else {
-        if (userName) {
-            conditions.push(`{EJECUTANTE}='${userName}'`);
-            conditions.push(`{FECHA}='${today}'`);
-        } else {
-            renderTable([]);
-            return;
-        }
+        // ✅ USUARIO NORMAL: Subárea + Rango de fechas
+        if (userSubareaFilter) conditions.push(`{SUBÁREA}='${userSubareaFilter}'`);
+        if (userDateFrom) conditions.push(`{FECHA} >= '${userDateFrom}'`);
+        if (userDateTo) conditions.push(`{FECHA} <= '${userDateTo}'`);
     }
     
     if (isAdmin && conditions.length === 0) {
@@ -163,33 +233,13 @@ async function loadData() {
             }
             
             const data = await response.json();
-            
-            // ✅ ORDENAR POR SUBÁREA (SEGÚN EL ORDEN EXACTO DE ÁREAS)
-            const subareasOrder = [
-                "MECANICA",
-                "INSTRUMENTACIÓN",
-                "ELÉCTRICO",
-                "VALVULAS PSV Y PVV",
-                "A&C",
-                "CBM",
-                "VSD",
-                "FACILIDADES",
-                "OBREROS DE PATIO",
-                "CAMPAMENTERO",
-                "HSEQ"
-            ];
-            
-            data.records.sort((a, b) => {
-                const subA = (a.fields['SUBÁREA'] || '').toUpperCase().trim();
-                const subB = (b.fields['SUBÁREA'] || '').toUpperCase().trim();
-                const indexA = subareasOrder.indexOf(subA);
-                const indexB = subareasOrder.indexOf(subB);
-                if (indexA === -1) return 1; // Si no está en la lista, va al final
-                if (indexB === -1) return -1;
-                return indexA - indexB;
-            });
-            
             allRecords = data.records;
+            
+            // CONTADOR DE ACTIVIDADES (SOLO PARA USUARIO NORMAL)
+            if (!isAdmin) {
+                document.getElementById('activity-counter').style.display = 'block';
+                document.getElementById('activity-counter').innerText = `${allRecords.length} actividades encontradas`;
+            }
             
             if (sortState.field) {
                 sortRecords();
@@ -205,7 +255,7 @@ async function loadData() {
 }
 
 // ==========================================
-// RENDER TABLA
+// RENDER TABLA (CON COLORES POR AVANCE)
 // ==========================================
 function renderTable(records) {
     const tbody = document.getElementById('table-body');
@@ -220,8 +270,18 @@ function renderTable(records) {
             avance = avance + '%';
         }
         
+        // ✅ COLOR DE FONDO SEGÚN AVANCE
+        let rowClass = '';
+        if (avance === '100%') {
+            rowClass = 'avance-100';
+        } else if (avance === '50%') {
+            rowClass = 'avance-50';
+        } else if (avance === '0%' || avance === '') {
+            rowClass = 'avance-0';
+        }
+        
         const row = `
-        <tr>
+        <tr class="${rowClass}">
             <td>${f['Descripción'] ? f['Descripción'].toUpperCase() : ''}</td>
             <td>${f['TAG'] ? f['TAG'].toUpperCase() : ''}</td>
             <td>${f['PROG/NÓ PROG'] ? f['PROG/NÓ PROG'].toUpperCase() : ''}</td>
@@ -310,17 +370,6 @@ function openModal() {
     // Limpiar campo de ejecutantes
     document.getElementById('f-ejecutante').value = '';
     
-    // Si es usuario normal, pre-seleccionar su nombre
-    if (!isAdmin) {
-        const selectedUser = document.getElementById('user-name-select').value;
-        if (selectedUser) {
-            document.getElementById('f-ejecutante').value = selectedUser;
-        }
-    }
-    
-    // Cerrar el menú de OT si estaba abierto
-    document.getElementById('ot-dropdown').style.display = 'none';
-    
     document.getElementById('modal').style.display = 'flex';
 }
 
@@ -353,11 +402,6 @@ function closeModal() {
 // ==========================================
 // MENÚ DESPLEGABLE PARA OT (SOLO PTE)
 // ==========================================
-function toggleOTList() {
-    const dropdown = document.getElementById('ot-dropdown');
-    dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
-}
-
 function selectOT(valor) {
     document.getElementById('f-ot').value = valor;
     document.getElementById('ot-dropdown').style.display = 'none';
@@ -367,7 +411,9 @@ function selectOT(valor) {
 document.addEventListener('click', function(event) {
     const dropdown = document.getElementById('ot-dropdown');
     const inputOT = document.getElementById('f-ot');
-    if (dropdown && !dropdown.contains(event.target) && !inputOT.contains(event.target)) {
+    const btnOT = document.getElementById('btn-ot-toggle');
+    
+    if (dropdown && !dropdown.contains(event.target) && !inputOT.contains(event.target) && !btnOT.contains(event.target)) {
         dropdown.style.display = 'none';
     }
 });
@@ -444,6 +490,7 @@ async function saveRecord() {
         if (response.ok) {
             closeModal();
             loadData();
+            alert('✅ Actividad guardada correctamente');
         } else {
             const errorData = await response.json();
             alert(`Error al guardar: ${errorData.error?.message || 'Revisa los datos.'}`);
@@ -464,6 +511,7 @@ async function deleteRecord(id) {
             headers: { 'Authorization': `Bearer ${API_TOKEN}` }
         });
         loadData();
+        alert('✅ Actividad eliminada correctamente');
     }
 }
 
