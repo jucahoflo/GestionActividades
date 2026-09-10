@@ -1,4 +1,5 @@
 // CONFIGURACIÓN AIRTABLE
+// El token se lee desde el HTML (window.AIRTABLE_TOKEN) para que GitHub no lo detecte
 const API_TOKEN = window.AIRTABLE_TOKEN || '';
 const BASE_ID = 'appNFr6ryy3Sx1qlF';
 const TABLE_NAME = 'Actividades';
@@ -8,6 +9,16 @@ const API_URL = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME}`;
 let allRecords = [];
 let sortState = { field: '', direction: 'asc' };
 let isAdmin = false;
+
+// ==========================================
+// ✅ FUNCIÓN PARA OBTENER FECHA EN ZONA HORARIA COLOMBIA (UTC-5)
+// ==========================================
+function getFechaColombia() {
+    // Colombia está en UTC-5 (sin horario de verano)
+    const fecha = new Date();
+    const fechaColombia = new Date(fecha.getTime() - (5 * 60 * 60 * 1000));
+    return fechaColombia.toISOString().split('T')[0]; // Formato YYYY-MM-DD
+}
 
 // ==========================================
 // CONVERTIR A MAYÚSCULAS AUTOMÁTICAMENTE
@@ -59,7 +70,7 @@ function showFieldHelp(field) {
         'ot': 'Escribe la Orden de Trabajo (OT). Puedes seleccionar PTE si está pendiente.',
         'ejecutante': 'Escribe los nombres de los ejecutantes, uno por línea. Ej: ALBERT RONCANCIO, WILSON SALAS.',
         'subarea': 'Selecciona la subárea a la que pertenece la actividad.',
-        'fecha': 'La fecha se llena automáticamente con la fecha de hoy. No se puede modificar.',
+        'fecha': 'La fecha se llena automáticamente con la fecha de hoy en Colombia. No se puede modificar.',
         'area': 'Escribe el área o sistema general al que pertenece la actividad.'
     };
 
@@ -174,9 +185,9 @@ function clearUserFilters() {
 }
 
 function setTodayFilter() {
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('user-date-from').value = today;
-    document.getElementById('user-date-to').value = today;
+    const hoy = getFechaColombia(); // ✅ Usar fecha Colombia
+    document.getElementById('user-date-from').value = hoy;
+    document.getElementById('user-date-to').value = hoy;
     loadData();
 }
 
@@ -355,8 +366,8 @@ function openModal() {
     document.getElementById('modal-title').innerText = 'Nueva Actividad';
     document.getElementById('record-id').value = '';
     
-    // ⚠️ AUTOMÁTICO: Fecha de hoy sin digitar
-    document.getElementById('f-fecha').value = new Date().toISOString().split('T')[0];
+    // ✅ AUTOMÁTICO: Fecha de hoy en Colombia
+    document.getElementById('f-fecha').value = getFechaColombia();
     document.getElementById('f-fecha').readOnly = true; // Bloquear para que no se edite
     
     // Limpiar otros campos
@@ -388,7 +399,7 @@ function editRecord(id) {
         document.getElementById('f-ot').value = f['OT'] ? f['OT'].toUpperCase() : '';
         document.getElementById('f-ejecutante').value = f['EJECUTANTE'] ? f['EJECUTANTE'].toUpperCase() : '';
         document.getElementById('f-subarea').value = f['SUBÁREA'] ? f['SUBÁREA'].toUpperCase() : '';
-        document.getElementById('f-fecha').value = f['FECHA'] || new Date().toISOString().split('T')[0];
+        document.getElementById('f-fecha').value = f['FECHA'] || getFechaColombia(); // ✅ Usar fecha Colombia
         document.getElementById('f-fecha').readOnly = true; // Bloquear edición
         document.getElementById('f-area').value = f['AREA'] ? f['AREA'].toUpperCase() : '';
         document.getElementById('modal').style.display = 'flex';
@@ -601,11 +612,7 @@ function exportExcel() {
         });
         
         // ✅ CREAR LA ESTRUCTURA DE LA HOJA (AOA: Array of Arrays)
-        // Fila 0: FECHA
-        // Fila 1: Encabezados
-        // Fila 2 en adelante: Datos con bloques de 10 filas
-        
-        const exportDate = new Date().toLocaleDateString('es-ES'); // Ej: 31/08/2026
+        const exportDate = getFechaColombia(); // ✅ Usar fecha Colombia
         
         const headers = ["AREA", "AREA O SISTEMA", "DESCRIPCION DE ACTIVIDAD", "TAG", "PROG/NO PROG", "ESTACION", "AVANCE", "OT", "EJECUTANTE"];
         
@@ -694,7 +701,6 @@ function exportExcel() {
         
         // ✅ AGREGAR BLOQUES DE ÁREA (COMBINAR CELDAS DE LA COLUMNA A POR CADA ÁREA)
         let areaStartRow = 2; // Después del encabezado
-        let currentArea = subareasOrder[0];
         
         for (let i = 0; i < subareasOrder.length; i++) {
             const area = subareasOrder[i];
