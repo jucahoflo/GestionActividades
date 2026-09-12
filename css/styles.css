@@ -19,8 +19,8 @@ body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background
 #login-view { display: flex; justify-content: center; align-items: center; height: 100vh; background: linear-gradient(135deg, var(--primary) 0%, #4f46e5 100%); }
 .login-box { background: var(--white); padding: 2rem; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 350px; text-align: center; }
 .login-box h2 { margin-bottom: 1.5rem; color: var(--text); }
-input, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; transition: border-color 0.3s; }
-input:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+input, select, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; transition: border-color 0.3s; font-family: inherit; }
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
 button { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: all 0.3s; }
 button:hover { transform: translateY(-2px); }
 
@@ -33,55 +33,17 @@ button:hover { transform: translateY(-2px); }
 .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; background: var(--white); padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
 .header h1 { font-size: 1.5rem; color: var(--primary); }
 
-/* MASCOTA (MECÁNICO ARREGLANDO RUEDA) */
-.mascot-container {
-    display: flex;
-    align-items: center;
-    gap: 0px;
-    position: relative;
-    margin-right: 10px;
-}
+/* MASCOTA */
+.mascot-container { display: flex; align-items: center; gap: 0px; position: relative; margin-right: 10px; }
+.gear-large { animation: spin-gear 3s linear infinite; position: relative; z-index: 1; transform-origin: center; }
+.mechanic-figure { position: absolute; right: 0; bottom: -15px; z-index: 2; animation: mechanic-bob 1.5s ease-in-out infinite; }
 
-.gear-large {
-    animation: spin-gear 3s linear infinite;
-    position: relative;
-    z-index: 1;
-    transform-origin: center;
-}
+@keyframes spin-gear { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes mechanic-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 
-.mechanic-figure {
-    position: absolute;
-    right: 0;
-    bottom: -15px;
-    z-index: 2;
-    animation: mechanic-bob 1.5s ease-in-out infinite;
-}
-
-@keyframes spin-gear {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-
-@keyframes mechanic-bob {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-5px); }
-}
-
-/* BADGES Y BOTONES DE ROL */
+/* BOTONES */
 .btn-admin { background: var(--secondary); color: white; width: auto; padding: 10px 15px; }
 .btn-logout { background: var(--danger); color: white; width: auto; padding: 10px 20px; }
-
-.user-role-badge {
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: bold;
-    background: var(--primary);
-    color: white;
-}
-
-.toolbar { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; background: var(--white); padding: 1rem; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-.toolbar button { width: auto; }
 .btn-new { background: var(--success); color: white; }
 .btn-excel { background: var(--secondary); color: white; }
 .btn-qr { background: var(--warning); color: white; }
@@ -90,9 +52,11 @@ button:hover { transform: translateY(-2px); }
 .btn-today { background: var(--warning); color: white; }
 .btn-help { background: var(--primary); color: white; }
 .btn-help:hover { background: var(--primary-dark); }
-
-/* MENÚ DE FILTROS COLABSABLE */
 .btn-toggle-filters { background: var(--primary); color: white; }
+
+/* TOOLBAR */
+.toolbar { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; background: var(--white); padding: 1rem; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+.toolbar button { width: auto; }
 .filters-content { display: flex; gap: 10px; flex-wrap: wrap; width: 100%; }
 .filters-content.hidden { display: none; }
 
@@ -101,36 +65,20 @@ button:hover { transform: translateY(-2px); }
 .toolbar select { width: 200px; margin: 0; }
 .toolbar input[type="date"] { width: 150px; margin: 0; padding: 10px; }
 
-/* CONTADOR DE ACTIVIDADES */
-.counter {
-    margin-bottom: 15px;
-    font-size: 1rem;
-    font-weight: bold;
-    color: var(--primary);
-    background: var(--white);
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
+/* CONTADOR */
+.counter { margin-bottom: 15px; font-size: 1rem; font-weight: bold; color: var(--primary); background: var(--white); padding: 10px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
 
-/* TABLA (CON SCROLL HORIZONTAL) */
-.table-container {
-    overflow-x: auto;
-    background: var(--white);
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-}
-
-table { width: 100%; border-collapse: collapse; background: var(--white); border-radius: 12px; overflow: hidden; }
-th, td { padding: 14px 12px; text-align: left; border-bottom: 1px solid #e2e8f0; font-size: 0.9rem; min-width: 120px; }
+/* TABLA */
+table { width: 100%; border-collapse: collapse; background: var(--white); border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+th, td { padding: 14px 12px; text-align: left; border-bottom: 1px solid #e2e8f0; font-size: 0.9rem; }
 th { background: #f8fafc; color: var(--text-light); font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; }
 tr:hover { background-color: #f8fafc; }
-.actions { display: flex; gap: 5px; min-width: 150px; }
+.actions { display: flex; gap: 5px; }
 .actions button { padding: 6px 12px; font-size: 0.8rem; border-radius: 6px; }
 .btn-edit { background: var(--warning); color: white; }
 .btn-delete { background: var(--danger); color: white; }
 
-/* COLORES PARA AVANCE */
+/* COLORES AVANCE */
 tr.avance-100 { background-color: #d1fae5; }
 tr.avance-100:hover { background-color: #a7f3d0; }
 tr.avance-50 { background-color: #fef3c7; }
@@ -138,13 +86,8 @@ tr.avance-50:hover { background-color: #fde68a; }
 tr.avance-0 { background-color: #fee2e2; }
 tr.avance-0:hover { background-color: #fecaca; }
 
-/* AYUDA EN CAMPOS */
-.help-icon {
-    cursor: pointer;
-    color: var(--primary);
-    font-size: 0.9rem;
-    margin-left: 5px;
-}
+/* AYUDA */
+.help-icon { cursor: pointer; color: var(--primary); font-size: 0.9rem; margin-left: 5px; }
 
 /* MODAL */
 .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(4px); }
@@ -162,7 +105,7 @@ tr.avance-0:hover { background-color: #fecaca; }
 .btn-save { background: var(--success); color: white; }
 .btn-cancel { background: var(--secondary); color: white; }
 
-/* RESPONSIVE (CELULARES) */
+/* RESPONSIVE */
 @media (max-width: 768px) {
     #app-view { padding: 1rem; }
     .header { flex-direction: column; align-items: flex-start; gap: 10px; }
@@ -173,12 +116,7 @@ tr.avance-0:hover { background-color: #fecaca; }
     .toolbar input[type="date"] { width: 100%; }
     .form-grid { grid-template-columns: 1fr; }
     .full-width { grid-column: span 1; }
-    th, td { padding: 10px; font-size: 0.8rem; min-width: 100px; }
+    th, td { padding: 10px; font-size: 0.8rem; }
     .mascot-container { display: none; }
-    /* Tabla con scroll horizontal */
-    #activity-table {
-        display: block;
-        overflow-x: auto;
-        white-space: nowrap;
-    }
+    #activity-table { display: block; overflow-x: auto; white-space: nowrap; }
 }

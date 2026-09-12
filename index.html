@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestor de Actividades</title>
+    <link rel="icon" href="data:,">
     <link rel="stylesheet" href="css/styles.css">
-    <!-- Librería con estilos para colores en Excel -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
 </head>
 <body>
@@ -43,7 +43,7 @@
             </div>
         </div>
 
-        <!-- TOOLBAR USUARIO NORMAL (CON MENÚ COLABSABLE EN MÓVIL) -->
+        <!-- TOOLBAR USUARIO NORMAL -->
         <div class="toolbar" id="user-toolbar">
             <button onclick="toggleMobileFilters('user')" class="btn-toggle-filters">📋 Filtrar</button>
             
@@ -73,10 +73,9 @@
             <span id="user-message" style="color: #64748b; font-size: 0.9rem; align-self: center;">Seleccione subárea y rango de fechas para ver las actividades.</span>
         </div>
 
-        <!-- Contador de actividades -->
         <div class="counter" id="activity-counter" style="display: none;">0 actividades encontradas</div>
 
-        <!-- TOOLBAR ADMINISTRADOR (CON MENÚ COLABSABLE EN MÓVIL) -->
+        <!-- TOOLBAR ADMINISTRADOR -->
         <div class="toolbar" id="admin-toolbar" style="display: none;">
             <button onclick="toggleMobileFilters('admin')" class="btn-toggle-filters">📋 Filtrar</button>
             
@@ -147,7 +146,7 @@
         </table>
     </div>
 
-    <!-- Modal para Login de Administrador -->
+    <!-- Modal Login Admin -->
     <div id="admin-login-modal" class="modal">
         <div class="modal-content" style="max-width: 350px;">
             <span class="close" onclick="closeAdminLogin()">&times;</span>
@@ -162,7 +161,7 @@
         </div>
     </div>
 
-    <!-- Modal para Exportar por Fechas -->
+    <!-- Modal Exportar por Fechas -->
     <div id="export-modal" class="modal">
         <div class="modal-content" style="max-width: 400px;">
             <span class="close" onclick="closeExportModal()">&times;</span>
@@ -182,7 +181,7 @@
         </div>
     </div>
 
-    <!-- Modal para Código QR -->
+    <!-- Modal Código QR -->
     <div id="qr-modal" class="modal">
         <div class="modal-content" style="max-width: 400px;">
             <span class="close" onclick="closeQRModal()">&times;</span>
@@ -198,7 +197,7 @@
         </div>
     </div>
 
-    <!-- Modal de Ayuda para Usuario Normal -->
+    <!-- Modal Ayuda Usuario Normal -->
     <div id="help-modal" class="modal">
         <div class="modal-content" style="max-width: 500px;">
             <span class="close" onclick="closeHelpModal()">&times;</span>
@@ -257,13 +256,11 @@
                     </select>
                 </div>
 
-                <!-- AVANCE: Solo números con % automático -->
                 <div>
                     <label>AVANCE * <span class="help-icon" onclick="showFieldHelp('avance')">❓</span></label>
                     <input type="text" id="f-avance" placeholder="Ej: 75" maxlength="3" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 3);">
                 </div>
 
-                <!-- OT: Input normal con menú desplegable PTE -->
                 <div>
                     <label>OT * <span class="help-icon" onclick="showFieldHelp('ot')">❓</span></label>
                     <div style="position: relative; width: 100%;">
@@ -278,10 +275,10 @@
                     </div>
                 </div>
 
-                <!-- EJECUTANTES: Escribir uno por línea -->
+                <!-- ✅ EJECUTANTES CON MAYÚSCULAS AUTOMÁTICAS -->
                 <div>
                     <label>EJECUTANTES (Escriba uno por línea) * <span class="help-icon" onclick="showFieldHelp('ejecutante')">❓</span></label>
-                    <textarea id="f-ejecutante" rows="5" placeholder="Escriba un nombre por línea...&#10;Ej:&#10;ALBERT RONCANCIO&#10;WILSON SALAS"></textarea>
+                    <textarea id="f-ejecutante" rows="5" placeholder="Escriba un nombre por línea...&#10;Ej:&#10;ALBERT RONCANCIO&#10;WILSON SALAS" oninput="this.value = this.value.toUpperCase();"></textarea>
                 </div>
 
                 <div>
@@ -322,7 +319,7 @@
         </div>
     </div>
 
-    <!-- Modal de Ayuda para Campos del Formulario -->
+    <!-- Modal Ayuda Campo -->
     <div id="field-help-modal" class="modal">
         <div class="modal-content" style="max-width: 400px;">
             <span class="close" onclick="closeFieldHelp()">&times;</span>
@@ -333,11 +330,6 @@
             </div>
         </div>
     </div>
-
-    <!-- ⚠️ TOKEN DIVIDIDO EN 3 PARTES PARA EVITAR QUE GITHUB LO DETECTE -->
-    <script>
-        window.AIRTABLE_TOKEN = "pat1xsj" + "YK4Y2UVwKv" + ".0b9cc54f70269557fffaf9f21dd74ad066a5b5f21de3f55f15850efe454ab7c3";
-    </script>
 
     <script src="js/app.js"></script>
 </body>

@@ -1,9 +1,7 @@
-// CONFIGURACIÓN AIRTABLE
-// El token se lee desde el HTML (window.AIRTABLE_TOKEN) para que GitHub no lo detecte
-const API_TOKEN = window.AIRTABLE_TOKEN || '';
-const BASE_ID = 'appNFr6ryy3Sx1qlF';
-const TABLE_NAME = 'Actividades';
-const API_URL = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME}`;
+// ==========================================
+// CONFIGURACIÓN - GOOGLE APPS SCRIPT
+// ==========================================
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby73wBltoTjoLSkhGoDM-NYz7YCE3gvgUibLLCw7tnbcmugV4fDZPR8EMk2vjTg-_g0/exec';
 
 // ESTADO GLOBAL
 let allRecords = [];
@@ -11,17 +9,53 @@ let sortState = { field: '', direction: 'asc' };
 let isAdmin = false;
 
 // ==========================================
-// ✅ FUNCIÓN PARA OBTENER FECHA EN ZONA HORARIA COLOMBIA (UTC-5)
+// ✅ FECHA EN ZONA HORARIA COLOMBIA (UTC-5)
 // ==========================================
 function getFechaColombia() {
-    // Colombia está en UTC-5 (sin horario de verano)
     const fecha = new Date();
     const fechaColombia = new Date(fecha.getTime() - (5 * 60 * 60 * 1000));
-    return fechaColombia.toISOString().split('T')[0]; // Formato YYYY-MM-DD
+    return fechaColombia.toISOString().split('T')[0];
 }
 
 // ==========================================
-// CONVERTIR A MAYÚSCULAS AUTOMÁTICAMENTE
+// ✅ CONVERTIR FECHA DE GOOGLE SHEETS A TEXTO
+// ==========================================
+function formatearFecha(fechaRec) {
+    if (!fechaRec) return '';
+    if (typeof fechaRec === 'string') {
+        return fechaRec.split('T')[0];
+    }
+    try {
+        const d = new Date(fechaRec);
+        if (isNaN(d.getTime())) return String(fechaRec);
+        const colombiaTime = new Date(d.getTime() - (5 * 60 * 60 * 1000));
+        return colombiaTime.toISOString().split('T')[0];
+    } catch (e) {
+        return String(fechaRec);
+    }
+}
+
+// ==========================================
+// ✅ CONVERTIR AVANCE: Google Sheets usa decimal (1 = 100%, 0.5 = 50%)
+// ==========================================
+function convertirAvanceParaMostrar(avanceRaw) {
+    if (avanceRaw === null || avanceRaw === undefined || avanceRaw === '') {
+        return { texto: '', numero: 0 };
+    }
+    
+    let valor = parseFloat(avanceRaw);
+    
+    if (!isNaN(valor)) {
+        let avanceNum = valor * 100;
+        let texto = avanceNum % 1 === 0 ? avanceNum.toString() : avanceNum.toFixed(1);
+        return { texto: texto + '%', numero: avanceNum };
+    } else {
+        return { texto: String(avanceRaw), numero: 0 };
+    }
+}
+
+// ==========================================
+// CONVERTIR A MAYÚSCULAS
 // ==========================================
 function toUpperCaseInput(input) {
     input.value = input.value.toUpperCase();
@@ -34,7 +68,6 @@ window.onload = function() {
     document.getElementById('role-badge').textContent = '👤 Usuario Normal';
     document.getElementById('role-badge').style.background = '#64748b';
     
-    // Configurar los inputs de texto para que conviertan a mayúsculas mientras se escribe
     const textInputs = ['f-descripcion', 'f-tag', 'f-avance', 'f-ot', 'f-area'];
     textInputs.forEach(id => {
         const input = document.getElementById(id);
@@ -45,10 +78,12 @@ window.onload = function() {
         }
     });
     
-    // ✅ AGREGAR EVENTO AL BOTÓN ▼ PARA ABRIR EL MENÚ DE OT
-    document.getElementById('btn-ot-toggle').addEventListener('click', function() {
-        document.getElementById('ot-dropdown').style.display = 'block';
-    });
+    const btnOT = document.getElementById('btn-ot-toggle');
+    if (btnOT) {
+        btnOT.addEventListener('click', function() {
+            document.getElementById('ot-dropdown').style.display = 'block';
+        });
+    }
     
     renderTable([]);
     
@@ -58,22 +93,21 @@ window.onload = function() {
 };
 
 // ==========================================
-// AYUDA EN CAMPOS DEL FORMULARIO
+// AYUDA EN CAMPOS
 // ==========================================
 function showFieldHelp(field) {
     const helpTexts = {
-        'descripcion': 'Escribe una descripción clara y concisa de la actividad a realizar. Ej: "Mantenimiento preventivo motor".',
+        'descripcion': 'Escribe una descripción clara y concisa de la actividad.',
         'tag': 'Escribe el TAG identificador del equipo. Ej: TAG-001.',
-        'prog': 'Selecciona P si es una actividad Programada, o NP si es No Programada.',
-        'estacion': 'Selecciona la estación donde se realizará la actividad. Ej: JGR, CCS, etc.',
-        'avance': 'Escribe el porcentaje de avance (solo números del 0 al 100). Se agregará automáticamente el símbolo %.',
-        'ot': 'Escribe la Orden de Trabajo (OT). Puedes seleccionar PTE si está pendiente.',
-        'ejecutante': 'Escribe los nombres de los ejecutantes, uno por línea. Ej: ALBERT RONCANCIO, WILSON SALAS.',
-        'subarea': 'Selecciona la subárea a la que pertenece la actividad.',
-        'fecha': 'La fecha se llena automáticamente con la fecha de hoy en Colombia. No se puede modificar.',
-        'area': 'Escribe el área o sistema general al que pertenece la actividad.'
+        'prog': 'Selecciona P si es Programada, o NP si es No Programada.',
+        'estacion': 'Selecciona la estación donde se realizará la actividad.',
+        'avance': 'Escribe el porcentaje (0-100). Se agrega el símbolo %.',
+        'ot': 'Escribe la Orden de Trabajo. Puedes usar PTE si está pendiente.',
+        'ejecutante': 'Escribe los nombres, uno por línea.',
+        'subarea': 'Selecciona la subárea a la que pertenece.',
+        'fecha': 'La fecha se llena automáticamente al crear. Al editar, se puede cambiar.',
+        'area': 'Escribe el área o sistema general.'
     };
-
     document.getElementById('field-help-text').innerText = helpTexts[field] || 'Este campo es obligatorio.';
     document.getElementById('field-help-modal').style.display = 'flex';
 }
@@ -123,7 +157,7 @@ function adminLoginSuccess() {
     document.getElementById('filter-date-from').value = '';
     document.getElementById('filter-date-to').value = '';
     
-    renderTable([]);
+    loadData();
 }
 
 function logoutAdmin() {
@@ -145,7 +179,6 @@ function logoutAdmin() {
     document.getElementById('filter-date-from').value = '';
     document.getElementById('filter-date-to').value = '';
     
-    // LIMPIAR FILTROS DE USUARIO NORMAL
     document.getElementById('user-filter-subarea').value = '';
     document.getElementById('user-date-from').value = '';
     document.getElementById('user-date-to').value = '';
@@ -154,20 +187,15 @@ function logoutAdmin() {
 }
 
 // ==========================================
-// MENÚ DE FILTROS COLABSABLE EN MÓVIL
+// MENÚ FILTROS COLABSABLE
 // ==========================================
 function toggleMobileFilters(role) {
-    if (role === 'user') {
-        const content = document.getElementById('user-filters-content');
-        content.classList.toggle('hidden');
-    } else if (role === 'admin') {
-        const content = document.getElementById('admin-filters-content');
-        content.classList.toggle('hidden');
-    }
+    const content = document.getElementById(role === 'user' ? 'user-filters-content' : 'admin-filters-content');
+    content.classList.toggle('hidden');
 }
 
 // ==========================================
-// AYUDA PARA USUARIO NORMAL
+// AYUDA USUARIO NORMAL
 // ==========================================
 function showHelpModal() {
     document.getElementById('help-modal').style.display = 'flex';
@@ -177,135 +205,167 @@ function closeHelpModal() {
     document.getElementById('help-modal').style.display = 'none';
 }
 
+// ==========================================
+// ✅ QUITAR FILTROS USUARIO NORMAL (tabla vacía)
+// ==========================================
 function clearUserFilters() {
     document.getElementById('user-filter-subarea').value = '';
     document.getElementById('user-date-from').value = '';
     document.getElementById('user-date-to').value = '';
-    loadData();
+    
+    // ✅ LIMPIAR TABLA Y CONTADOR (no cargar datos)
+    document.getElementById('activity-counter').style.display = 'none';
+    document.getElementById('activity-counter').innerText = '0 actividades encontradas';
+    renderTable([]);
 }
 
 function setTodayFilter() {
-    const hoy = getFechaColombia(); // ✅ Usar fecha Colombia
+    const hoy = getFechaColombia();
     document.getElementById('user-date-from').value = hoy;
     document.getElementById('user-date-to').value = hoy;
     loadData();
 }
 
 // ==========================================
-// CRUD AIRTABLE - SOLO CARGA CUANDO HAY FILTROS
+// ✅ LEER DATOS DESDE GOOGLE SHEETS (JSONP - evita CORS)
 // ==========================================
-async function loadData() {
-    const subareaFilter = isAdmin ? document.getElementById('filter-subarea').value : '';
-    const searchTerm = isAdmin ? document.getElementById('search-descripcion').value : '';
-    const estacionFilter = isAdmin ? document.getElementById('filter-estacion').value : '';
-    const progFilter = isAdmin ? document.getElementById('filter-prog').value : '';
-    const dateFrom = isAdmin ? document.getElementById('filter-date-from').value : '';
-    const dateTo = isAdmin ? document.getElementById('filter-date-to').value : '';
+function loadData() {
+    const callbackName = 'jsonp_' + Date.now();
+    let datosRecibidos = false;
     
-    // ✅ DATOS DEL USUARIO NORMAL (Subárea + Rango de fechas)
-    const userSubareaFilter = isAdmin ? '' : document.getElementById('user-filter-subarea').value;
-    const userDateFrom = isAdmin ? '' : document.getElementById('user-date-from').value;
-    const userDateTo = isAdmin ? '' : document.getElementById('user-date-to').value;
-    
-    let conditions = [];
-    
-    if (isAdmin) {
-        if (subareaFilter) conditions.push(`{SUBÁREA}='${subareaFilter}'`);
-        if (searchTerm) conditions.push(`SEARCH("${searchTerm.toUpperCase()}", {Descripción}) != ""`);
-        if (estacionFilter) conditions.push(`{ESTACION}='${estacionFilter}'`);
-        if (progFilter) conditions.push(`{PROG/NÓ PROG}='${progFilter}'`);
-        if (dateFrom) conditions.push(`{FECHA} >= '${dateFrom}'`);
-        if (dateTo) conditions.push(`{FECHA} <= '${dateTo}'`);
-    } else {
-        // ✅ USUARIO NORMAL: Subárea + Rango de fechas
-        if (userSubareaFilter) conditions.push(`{SUBÁREA}='${userSubareaFilter}'`);
-        if (userDateFrom) conditions.push(`{FECHA} >= '${userDateFrom}'`);
-        if (userDateTo) conditions.push(`{FECHA} <= '${userDateTo}'`);
-    }
-    
-    if (isAdmin && conditions.length === 0) {
-        renderTable([]);
-        return;
-    }
-    
-    if (conditions.length > 0) {
-        const filterFormula = `AND(${conditions.join(', ')})`;
+    window[callbackName] = function(data) {
+        datosRecibidos = true;
         
         try {
-            const response = await fetch(`${API_URL}?filterByFormula=${encodeURIComponent(filterFormula)}`, {
-                headers: { 'Authorization': `Bearer ${API_TOKEN}` }
-            });
-            
-            if (!response.ok) {
-                const errorData = await response.json();
-                console.error("Error detallado de Airtable:", errorData);
-                alert(`Error de Airtable: ${errorData.error?.message || 'Error desconocido. Revisa la consola (F12).'}`);
+            if (!data.ok) {
+                alert('Error al leer datos: ' + (data.error || 'Desconocido'));
                 return;
             }
             
-            const data = await response.json();
             allRecords = data.records;
             
-            // CONTADOR DE ACTIVIDADES (SOLO PARA USUARIO NORMAL)
+            // APLICAR FILTROS
+            let filtered = [...allRecords];
+            
+            if (isAdmin) {
+                const subareaFilter = document.getElementById('filter-subarea').value;
+                const searchTerm = document.getElementById('search-descripcion').value;
+                const estacionFilter = document.getElementById('filter-estacion').value;
+                const progFilter = document.getElementById('filter-prog').value;
+                const dateFrom = document.getElementById('filter-date-from').value;
+                const dateTo = document.getElementById('filter-date-to').value;
+                
+                if (subareaFilter) filtered = filtered.filter(r => String(r['SUBÁREA'] || '').toUpperCase() === subareaFilter);
+                if (searchTerm) filtered = filtered.filter(r => String(r['Descripción'] || '').toUpperCase().includes(searchTerm.toUpperCase()));
+                if (estacionFilter) filtered = filtered.filter(r => String(r['ESTACION'] || '').toUpperCase() === estacionFilter);
+                if (progFilter) filtered = filtered.filter(r => String(r['PROG/NÓ PROG'] || '').toUpperCase() === progFilter);
+                if (dateFrom) filtered = filtered.filter(r => formatearFecha(r['FECHA']) >= dateFrom);
+                if (dateTo) filtered = filtered.filter(r => formatearFecha(r['FECHA']) <= dateTo);
+            } else {
+                const userSubareaFilter = document.getElementById('user-filter-subarea').value;
+                const userDateFrom = document.getElementById('user-date-from').value;
+                const userDateTo = document.getElementById('user-date-to').value;
+                
+                if (userSubareaFilter) filtered = filtered.filter(r => String(r['SUBÁREA'] || '').toUpperCase() === userSubareaFilter);
+                if (userDateFrom) filtered = filtered.filter(r => formatearFecha(r['FECHA']) >= userDateFrom);
+                if (userDateTo) filtered = filtered.filter(r => formatearFecha(r['FECHA']) <= userDateTo);
+            }
+            
+            // ✅ ORDENAR POR SUBÁREA
+            const subareasOrder = [
+                "MECANICA", "INSTRUMENTACIÓN", "ELÉCTRICO", "VALVULAS PSV Y PVV",
+                "A&C", "CBM", "VSD", "FACILIDADES", "OBREROS DE PATIO",
+                "CAMPAMENTERO", "HSEQ"
+            ];
+            
+            filtered.sort((a, b) => {
+                const subA = String(a['SUBÁREA'] || '').toUpperCase().trim();
+                const subB = String(b['SUBÁREA'] || '').toUpperCase().trim();
+                const indexA = subareasOrder.indexOf(subA);
+                const indexB = subareasOrder.indexOf(subB);
+                if (indexA === -1) return 1;
+                if (indexB === -1) return -1;
+                return indexA - indexB;
+            });
+            
             if (!isAdmin) {
                 document.getElementById('activity-counter').style.display = 'block';
-                document.getElementById('activity-counter').innerText = `${allRecords.length} actividades encontradas`;
+                document.getElementById('activity-counter').innerText = `${filtered.length} actividades encontradas`;
             }
             
             if (sortState.field) {
-                sortRecords();
+                sortRecords(filtered);
             } else {
-                renderTable(allRecords);
+                renderTable(filtered);
             }
-            
         } catch (error) {
-            console.error('Error cargando datos:', error);
-            alert('Error al conectar con Airtable. Revisa tu token.');
+            console.error('Error procesando datos:', error);
+        } finally {
+            delete window[callbackName];
         }
-    }
+    };
+    
+    // Crear el script JSONP
+    const script = document.createElement('script');
+    script.id = callbackName;
+    script.src = SCRIPT_URL + '?callback=' + callbackName;
+    
+    // ✅ SOLO mostrar error si los datos NO se recibieron
+    script.onerror = function() {
+        if (datosRecibidos) return;
+        console.error('Error cargando el script JSONP');
+        alert('Error al conectar con Google Sheets.');
+        delete window[callbackName];
+        if (script.parentNode) script.remove();
+    };
+    
+    document.body.appendChild(script);
+    
+    // Limpiar el script después de 10 segundos
+    setTimeout(() => {
+        if (script.parentNode) script.remove();
+        delete window[callbackName];
+    }, 10000);
 }
 
 // ==========================================
-// RENDER TABLA (CON COLORES POR AVANCE)
+// RENDER TABLA (con conversión correcta de AVANCE)
 // ==========================================
 function renderTable(records) {
     const tbody = document.getElementById('table-body');
     tbody.innerHTML = '';
     
     records.forEach(rec => {
-        const f = rec.fields;
+        const avanceInfo = convertirAvanceParaMostrar(rec['AVANCE']);
+        const avance = avanceInfo.texto;
+        const avanceNum = avanceInfo.numero;
         
-        // ✅ OBTENER AVANCE Y AGREGAR % AUTOMÁTICAMENTE EN PANTALLA
-        let avance = (f['AVANCE'] || '').toUpperCase();
-        if (avance !== '' && !avance.includes('%')) {
-            avance = avance + '%';
-        }
-        
-        // ✅ COLOR DE FONDO SEGÚN AVANCE
         let rowClass = '';
-        if (avance === '100%') {
+        if (avanceNum === 100) {
             rowClass = 'avance-100';
-        } else if (avance === '50%') {
+        } else if (avanceNum >= 50 && avanceNum < 100) {
             rowClass = 'avance-50';
-        } else if (avance === '0%' || avance === '') {
+        } else if (avanceNum === 0 || avance === '' || isNaN(avanceNum)) {
             rowClass = 'avance-0';
         }
         
+        const fechaTexto = formatearFecha(rec['FECHA']);
+        
         const row = `
         <tr class="${rowClass}">
-            <td>${f['Descripción'] ? f['Descripción'].toUpperCase() : ''}</td>
-            <td>${f['TAG'] ? f['TAG'].toUpperCase() : ''}</td>
-            <td>${f['PROG/NÓ PROG'] ? f['PROG/NÓ PROG'].toUpperCase() : ''}</td>
-            <td>${f['ESTACION'] ? f['ESTACION'].toUpperCase() : ''}</td>
+            <td>${String(rec['Descripción'] || '').toUpperCase()}</td>
+            <td>${String(rec['TAG'] || '').toUpperCase()}</td>
+            <td>${String(rec['PROG/NÓ PROG'] || '').toUpperCase()}</td>
+            <td>${String(rec['ESTACION'] || '').toUpperCase()}</td>
             <td>${avance}</td>
-            <td>${f['OT'] ? f['OT'].toUpperCase() : ''}</td>
-            <td>${f['EJECUTANTE'] ? f['EJECUTANTE'].toUpperCase() : ''}</td>
-            <td>${f['SUBÁREA'] ? f['SUBÁREA'].toUpperCase() : ''}</td>
-            <td>${f['FECHA'] || ''}</td>
-            <td>${f['AREA'] ? f['AREA'].toUpperCase() : ''}</td>
+            <td>${String(rec['OT'] || '').toUpperCase()}</td>
+            <td>${String(rec['EJECUTANTE'] || '').toUpperCase()}</td>
+            <td>${String(rec['SUBÁREA'] || '').toUpperCase()}</td>
+            <td>${fechaTexto}</td>
+            <td>${String(rec['AREA'] || '').toUpperCase()}</td>
             <td class="actions">
-                <button class="btn-edit" onclick="editRecord('${rec.id}')">Editar</button>
-                ${isAdmin ? `<button class="btn-delete" onclick="deleteRecord('${rec.id}')">Eliminar</button>` : ''}
+                <button class="btn-edit" onclick="editRecord(${rec.id})">Editar</button>
+                ${isAdmin ? `<button class="btn-delete" onclick="deleteRecord(${rec.id})">Eliminar</button>` : ''}
             </td>
         </tr>`;
         tbody.innerHTML += row;
@@ -322,17 +382,17 @@ function sortTable(field) {
         sortState.field = field;
         sortState.direction = 'asc';
     }
-    sortRecords();
+    loadData();
     
     document.querySelectorAll('th').forEach(th => th.innerHTML = th.innerHTML.replace(' ⬆', ' ⬍').replace(' ⬇', ' ⬍'));
     const clickedTh = [...document.querySelectorAll('th')].find(th => th.innerText.includes(field));
     if (clickedTh) clickedTh.innerHTML = clickedTh.innerHTML.replace(' ⬍', sortState.direction === 'asc' ? ' ⬆' : ' ⬇');
 }
 
-function sortRecords() {
-    const sorted = [...allRecords].sort((a, b) => {
-        let valA = (a.fields[sortState.field] || '').toString().toLowerCase();
-        let valB = (b.fields[sortState.field] || '').toString().toLowerCase();
+function sortRecords(records) {
+    const sorted = [...records].sort((a, b) => {
+        let valA = String(a[sortState.field] || '').toLowerCase();
+        let valB = String(b[sortState.field] || '').toLowerCase();
         
         if (sortState.field === 'FECHA') {
             valA = new Date(valA).getTime();
@@ -347,7 +407,7 @@ function sortRecords() {
 }
 
 // ==========================================
-// FILTROS Y BÚSQUEDA (SOLO ADMIN)
+// FILTROS ADMIN (Quitar filtro en admin sigue mostrando todo)
 // ==========================================
 function clearFilters() {
     document.getElementById('search-descripcion').value = '';
@@ -360,50 +420,58 @@ function clearFilters() {
 }
 
 // ==========================================
-// MODAL Y FORMULARIO
+// ✅ MODAL CREAR (fecha automática y bloqueada)
 // ==========================================
 function openModal() {
     document.getElementById('modal-title').innerText = 'Nueva Actividad';
     document.getElementById('record-id').value = '';
     
-    // ✅ AUTOMÁTICO: Fecha de hoy en Colombia
+    // ✅ FECHA AUTOMÁTICA (Colombia) Y BLOQUEADA
     document.getElementById('f-fecha').value = getFechaColombia();
-    document.getElementById('f-fecha').readOnly = true; // Bloquear para que no se edite
+    document.getElementById('f-fecha').readOnly = true;
+    document.getElementById('f-fecha').style.backgroundColor = '#f1f5f9';
+    document.getElementById('f-fecha').style.cursor = 'not-allowed';
     
-    // Limpiar otros campos
     const textInputs = ['f-descripcion', 'f-tag', 'f-avance', 'f-ot', 'f-area'];
     textInputs.forEach(id => document.getElementById(id).value = '');
     
     document.getElementById('f-prog').value = '';
     document.getElementById('f-estacion').value = '';
     document.getElementById('f-subarea').value = '';
-    
-    // Limpiar campo de ejecutantes
     document.getElementById('f-ejecutante').value = '';
     
     document.getElementById('modal').style.display = 'flex';
 }
 
+// ==========================================
+// ✅ MODAL EDITAR (fecha editable)
+// ==========================================
 function editRecord(id) {
-    fetch(`${API_URL}/${id}`, { headers: { 'Authorization': `Bearer ${API_TOKEN}` } })
-    .then(res => res.json())
-    .then(rec => {
-        const f = rec.fields;
-        document.getElementById('modal-title').innerText = 'Editar Actividad';
-        document.getElementById('record-id').value = id;
-        document.getElementById('f-descripcion').value = f['Descripción'] ? f['Descripción'].toUpperCase() : '';
-        document.getElementById('f-tag').value = f['TAG'] ? f['TAG'].toUpperCase() : '';
-        document.getElementById('f-prog').value = f['PROG/NÓ PROG'] ? f['PROG/NÓ PROG'].toUpperCase() : '';
-        document.getElementById('f-estacion').value = f['ESTACION'] ? f['ESTACION'].toUpperCase() : '';
-        document.getElementById('f-avance').value = f['AVANCE'] ? f['AVANCE'].toUpperCase() : '';
-        document.getElementById('f-ot').value = f['OT'] ? f['OT'].toUpperCase() : '';
-        document.getElementById('f-ejecutante').value = f['EJECUTANTE'] ? f['EJECUTANTE'].toUpperCase() : '';
-        document.getElementById('f-subarea').value = f['SUBÁREA'] ? f['SUBÁREA'].toUpperCase() : '';
-        document.getElementById('f-fecha').value = f['FECHA'] || getFechaColombia(); // ✅ Usar fecha Colombia
-        document.getElementById('f-fecha').readOnly = true; // Bloquear edición
-        document.getElementById('f-area').value = f['AREA'] ? f['AREA'].toUpperCase() : '';
-        document.getElementById('modal').style.display = 'flex';
-    });
+    const rec = allRecords.find(r => r.id === id);
+    if (!rec) return;
+    
+    document.getElementById('modal-title').innerText = 'Editar Actividad';
+    document.getElementById('record-id').value = id;
+    document.getElementById('f-descripcion').value = String(rec['Descripción'] || '').toUpperCase();
+    document.getElementById('f-tag').value = String(rec['TAG'] || '').toUpperCase();
+    document.getElementById('f-prog').value = String(rec['PROG/NÓ PROG'] || '').toUpperCase();
+    document.getElementById('f-estacion').value = String(rec['ESTACION'] || '').toUpperCase();
+    
+    const avanceInfo = convertirAvanceParaMostrar(rec['AVANCE']);
+    document.getElementById('f-avance').value = avanceInfo.texto.replace('%', '');
+    
+    document.getElementById('f-ot').value = String(rec['OT'] || '').toUpperCase();
+    document.getElementById('f-ejecutante').value = String(rec['EJECUTANTE'] || '').toUpperCase();
+    document.getElementById('f-subarea').value = String(rec['SUBÁREA'] || '').toUpperCase();
+    
+    // ✅ FECHA EDITABLE AL EDITAR
+    document.getElementById('f-fecha').value = formatearFecha(rec['FECHA']) || getFechaColombia();
+    document.getElementById('f-fecha').readOnly = false;
+    document.getElementById('f-fecha').style.backgroundColor = '#ffffff';
+    document.getElementById('f-fecha').style.cursor = 'pointer';
+    
+    document.getElementById('f-area').value = String(rec['AREA'] || '').toUpperCase();
+    document.getElementById('modal').style.display = 'flex';
 }
 
 function closeModal() {
@@ -411,14 +479,13 @@ function closeModal() {
 }
 
 // ==========================================
-// MENÚ DESPLEGABLE PARA OT (SOLO PTE)
+// MENÚ OT
 // ==========================================
 function selectOT(valor) {
     document.getElementById('f-ot').value = valor;
     document.getElementById('ot-dropdown').style.display = 'none';
 }
 
-// Cerrar el menú si el usuario hace clic fuera
 document.addEventListener('click', function(event) {
     const dropdown = document.getElementById('ot-dropdown');
     const inputOT = document.getElementById('f-ot');
@@ -439,36 +506,40 @@ function validateForm() {
     const subarea = document.getElementById('f-subarea').value;
     const fecha = document.getElementById('f-fecha').value;
     const ot = document.getElementById('f-ot').value.trim();
-    
-    // Verificar que haya al menos un ejecutante escrito
     const ejecutantesTexto = document.getElementById('f-ejecutante').value.trim();
     
     if (!descripcion || !prog || !estacion || !subarea || !fecha || !ot || !ejecutantesTexto) {
-        alert('Por favor, completa los campos obligatorios: Descripción, PROG/NP, Estación, OT, Ejecutante, Subárea y Fecha.');
+        alert('Por favor, completa los campos obligatorios.');
         return false;
     }
     return true;
 }
 
 // ==========================================
-// SAVE (CREATE / UPDATE)
+// ✅ GUARDAR EN GOOGLE SHEETS
 // ==========================================
 async function saveRecord() {
     if (!validateForm()) return;
 
     const id = document.getElementById('record-id').value;
     
-    // Obtener los ejecutantes desde el textarea (uno por línea)
     const ejecutantesTexto = document.getElementById('f-ejecutante').value
         .split('\n')
         .map(nombre => nombre.trim().toUpperCase())
         .filter(nombre => nombre !== '')
-        .join('\n'); // Se guarda con saltos de línea
+        .join('\n');
     
-    // Obtener el avance y agregar el % automáticamente
-    let avance = document.getElementById('f-avance').value.trim();
-    if (avance !== '' && !avance.includes('%')) {
-        avance = avance + '%';
+    // ✅ CONVERTIR AVANCE: escribir "100" guarda "1" en Google Sheets
+    let avanceTexto = document.getElementById('f-avance').value.trim();
+    let avance = '';
+    if (avanceTexto !== '') {
+        let avanceNum = parseFloat(avanceTexto.replace('%', ''));
+        if (!isNaN(avanceNum)) {
+            let avanceDecimal = avanceNum / 100;
+            avance = avanceDecimal.toString();
+        } else {
+            avance = avanceTexto;
+        }
     }
     
     const fields = {
@@ -483,28 +554,28 @@ async function saveRecord() {
         "FECHA": document.getElementById('f-fecha').value,
         "AREA": document.getElementById('f-area').value.trim().toUpperCase()
     };
-
-    const method = id ? 'PATCH' : 'POST';
-    const url = id ? `${API_URL}/${id}` : API_URL;
-    const body = id ? { fields } : { records: [{ fields }] };
+    
+    const payload = id 
+        ? { accion: "actualizar", id: parseInt(id), ...fields }
+        : { accion: "crear", ...fields };
 
     try {
-        const response = await fetch(url, {
-            method: method,
-            headers: { 
-                'Authorization': `Bearer ${API_TOKEN}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(body)
+        const formData = new URLSearchParams();
+        formData.append('data', JSON.stringify(payload));
+        
+        const response = await fetch(SCRIPT_URL, {
+            method: 'POST',
+            body: formData
         });
-
-        if (response.ok) {
+        
+        const result = await response.json();
+        
+        if (result.ok) {
             closeModal();
             loadData();
             alert('✅ Actividad guardada correctamente');
         } else {
-            const errorData = await response.json();
-            alert(`Error al guardar: ${errorData.error?.message || 'Revisa los datos.'}`);
+            alert('Error al guardar: ' + (result.error || 'Revisa los datos.'));
         }
     } catch (error) {
         console.error(error);
@@ -513,26 +584,40 @@ async function saveRecord() {
 }
 
 // ==========================================
-// DELETE (SOLO ADMIN)
+// ✅ ELIMINAR EN GOOGLE SHEETS
 // ==========================================
 async function deleteRecord(id) {
-    if (confirm('¿Seguro que deseas eliminar esta actividad?')) {
-        await fetch(`${API_URL}/${id}`, {
-            method: 'DELETE',
-            headers: { 'Authorization': `Bearer ${API_TOKEN}` }
+    if (!confirm('¿Seguro que deseas eliminar esta actividad?')) return;
+    
+    try {
+        const formData = new URLSearchParams();
+        formData.append('data', JSON.stringify({ accion: "eliminar", id: id }));
+        
+        const response = await fetch(SCRIPT_URL, {
+            method: 'POST',
+            body: formData
         });
-        loadData();
-        alert('✅ Actividad eliminada correctamente');
+        
+        const result = await response.json();
+        
+        if (result.ok) {
+            loadData();
+            alert('✅ Actividad eliminada correctamente');
+        } else {
+            alert('Error al eliminar: ' + (result.error || 'Desconocido'));
+        }
+    } catch (error) {
+        console.error(error);
+        alert('Error de conexión.');
     }
 }
 
 // ==========================================
-// EXPORTAR POR FECHA (CON BLOQUES DE 10 FILAS POR ÁREA)
+// EXPORTAR EXCEL
 // ==========================================
 function openExportModal() {
     document.getElementById('export-date-from').value = '';
     document.getElementById('export-date-to').value = '';
-    
     document.getElementById('export-modal').style.display = 'flex';
 }
 
@@ -544,253 +629,121 @@ function exportExcel() {
     const fromDate = document.getElementById('export-date-from').value;
     const toDate = document.getElementById('export-date-to').value;
     
-    if (!fromDate && !toDate) {
-        // Exportar todo lo que está en la tabla (si hay algo)
-        const table = document.getElementById('activity-table');
-        const wb = XLSX.utils.table_to_book(table, { sheet: "Actividades" });
-        XLSX.writeFile(wb, "Actividades.xlsx");
+    let filtered = [...allRecords];
+    if (fromDate) filtered = filtered.filter(r => formatearFecha(r['FECHA']) >= fromDate);
+    if (toDate) filtered = filtered.filter(r => formatearFecha(r['FECHA']) <= toDate);
+    
+    if (filtered.length === 0) {
+        alert('No hay actividades en el rango seleccionado.');
         closeExportModal();
         return;
     }
     
-    // Construir fórmula de forma segura
-    let conditions = [];
-    if (fromDate) conditions.push(`{FECHA} >= '${fromDate}'`);
-    if (toDate) conditions.push(`{FECHA} <= '${toDate}'`);
+    const subareasOrder = [
+        "MECANICA", "INSTRUMENTACIÓN", "ELÉCTRICO", "VALVULAS PSV Y PVV",
+        "A&C", "CBM", "VSD", "FACILIDADES", "OBREROS DE PATIO",
+        "CAMPAMENTERO", "HSEQ"
+    ];
     
-    let filterFormula = '';
-    if (conditions.length > 0) {
-        filterFormula = `AND(${conditions.join(', ')})`;
-    }
-
-    // IMPORTANTE: Esta llamada es independiente de los filtros de la tabla y SIEMPRE busca en Airtable
-    fetch(`${API_URL}${filterFormula ? `?filterByFormula=${encodeURIComponent(filterFormula)}` : ''}`, {
-        headers: { 'Authorization': `Bearer ${API_TOKEN}` }
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.records.length === 0) {
-            alert('No hay actividades en el rango de fechas seleccionado.');
-            closeExportModal();
-            return;
-        }
-        
-        // ✅ ORDEN EXACTO DE ÁREAS
-        const subareasOrder = [
-            "MECANICA",
-            "INSTRUMENTACIÓN",
-            "ELÉCTRICO",
-            "VALVULAS PSV Y PVV",
-            "A&C",
-            "CBM",
-            "VSD",
-            "FACILIDADES",
-            "OBREROS DE PATIO",
-            "CAMPAMENTERO",
-            "HSEQ"
-        ];
-        
-        // ✅ FILAS RESERVADAS POR ÁREA
-        const rowsPerArea = 10;
-        
-        // ✅ AGRUPAR REGISTROS POR ÁREA
-        const groupedData = {};
-        subareasOrder.forEach(area => {
-            groupedData[area] = [];
-        });
-        
-        // Separar registros por área
-        data.records.forEach(rec => {
-            const subarea = (rec.fields['SUBÁREA'] || '').toUpperCase().trim();
-            if (groupedData[subarea]) {
-                groupedData[subarea].push(rec);
-            } else {
-                // Si no está en la lista, ir al final
-                if (!groupedData["SIN ÁREA"]) groupedData["SIN ÁREA"] = [];
-                groupedData["SIN ÁREA"].push(rec);
-            }
-        });
-        
-        // ✅ CREAR LA ESTRUCTURA DE LA HOJA (AOA: Array of Arrays)
-        const exportDate = getFechaColombia(); // ✅ Usar fecha Colombia
-        
-        const headers = ["AREA", "AREA O SISTEMA", "DESCRIPCION DE ACTIVIDAD", "TAG", "PROG/NO PROG", "ESTACION", "AVANCE", "OT", "EJECUTANTE"];
-        
-        // Construir la matriz de datos (AOA)
-        const aoaData = [["FECHA", exportDate], headers];
-        
-        // ✅ Llenar bloques por área
-        subareasOrder.forEach(area => {
-            const recordsOfArea = groupedData[area] || [];
-            
-            // Determinar cuántas filas usar (mínimo 10, o más si hay más actividades)
-            const totalRows = Math.max(rowsPerArea, recordsOfArea.length);
-            
-            // Llenar las filas (de 1 a totalRows)
-            for (let i = 0; i < totalRows; i++) {
-                const rec = recordsOfArea[i];
-                const row = [];
-                
-                if (rec) {
-                    const f = rec.fields;
-                    row.push(area); // Columna 0: AREA
-                    row.push((f['AREA'] || '').toUpperCase()); // Columna 1
-                    row.push((f['Descripción'] || '').toUpperCase()); // Columna 2
-                    row.push((f['TAG'] || '').toUpperCase()); // Columna 3
-                    row.push((f['PROG/NÓ PROG'] || '').toUpperCase()); // Columna 4
-                    row.push((f['ESTACION'] || '').toUpperCase()); // Columna 5
-                    row.push((f['AVANCE'] || '').toUpperCase()); // Columna 6
-                    row.push((f['OT'] || '').toUpperCase()); // Columna 7
-                    
-                    // ✅ EJECUTANTE CON SALTO DE LÍNEA
-                    const ejecutantes = (f['EJECUTANTE'] || '').toUpperCase();
-                    const ejecutantesConSaltos = ejecutantes.replace(/;/g, '\n'); // Si venía con ";" se convierte en salto de línea
-                    row.push(ejecutantesConSaltos); // Columna 8
-                } else {
-                    // Filas vacías (quedan los bordes y el fondo blanco)
-                    row.push(area); // Columna 0: AREA (sigue siendo el área)
-                    row.push(''); // Columna 1
-                    row.push(''); // Columna 2
-                    row.push(''); // Columna 3
-                    row.push(''); // Columna 4
-                    row.push(''); // Columna 5
-                    row.push(''); // Columna 6
-                    row.push(''); // Columna 7
-                    row.push(''); // Columna 8
-                }
-                
-                aoaData.push(row);
-            }
-        });
-        
-        // ✅ CREAR HOJA CON XLSX.utils.aoa_to_sheet
-        const ws = XLSX.utils.aoa_to_sheet(aoaData);
-        
-        // ✅ BORDES NEGROS PARA TODAS LAS CELDAS
-        const borderStyle = {
-            top: { style: "thin", color: { rgb: "000000" } },
-            bottom: { style: "thin", color: { rgb: "000000" } },
-            left: { style: "thin", color: { rgb: "000000" } },
-            right: { style: "thin", color: { rgb: "000000" } }
-        };
-        
-        // ✅ PINTAR LA FILA DE FECHA EN ROJO Y TEXTO BLANCO
-        ws['A1'].s = {
-            fill: { fgColor: { rgb: "FF0000" } },
-            font: { color: { rgb: "FFFFFF" }, bold: true },
-            alignment: { horizontal: "center", vertical: "center" },
-            border: borderStyle
-        };
-        ws['B1'].s = {
-            fill: { fgColor: { rgb: "FF0000" } },
-            font: { color: { rgb: "FFFFFF" }, bold: true },
-            alignment: { horizontal: "center", vertical: "center" },
-            border: borderStyle
-        };
-        
-        // ✅ PINTAR LA FILA DE ENCABEZADOS EN ROJO Y TEXTO BLANCO
-        headers.forEach((header, index) => {
-            const cell = XLSX.utils.encode_cell({ r: 1, c: index });
-            ws[cell].s = {
-                fill: { fgColor: { rgb: "FF0000" } },
-                font: { color: { rgb: "FFFFFF" }, bold: true },
-                alignment: { horizontal: "center", vertical: "center" },
-                border: borderStyle
-            };
-        });
-        
-        // ✅ AGREGAR BLOQUES DE ÁREA (COMBINAR CELDAS DE LA COLUMNA A POR CADA ÁREA)
-        let areaStartRow = 2; // Después del encabezado
-        
-        for (let i = 0; i < subareasOrder.length; i++) {
-            const area = subareasOrder[i];
-            const recordsOfArea = groupedData[area] || [];
-            const totalRows = Math.max(rowsPerArea, recordsOfArea.length);
-            
-            const areaEndRow = areaStartRow + totalRows - 1;
-            
-            // Combinar celdas en la columna A para el área
-            ws['!merges'] = ws['!merges'] || [];
-            ws['!merges'].push({ s: { r: areaStartRow, c: 0 }, e: { r: areaEndRow, c: 0 } });
-            
-            // Pintar las celdas de la columna A en rojo con texto blanco
-            for (let r = areaStartRow; r <= areaEndRow; r++) {
-                const cell = XLSX.utils.encode_cell({ r: r, c: 0 });
-                if (ws[cell]) {
-                    ws[cell].s = {
-                        fill: { fgColor: { rgb: "FF0000" } },
-                        font: { color: { rgb: "FFFFFF" }, bold: true, size: 10 },
-                        alignment: { horizontal: "center", vertical: "center", wrapText: true },
-                        border: borderStyle
-                    };
-                }
-            }
-            
-            areaStartRow = areaEndRow + 1;
-        }
-        
-        // ✅ BORDES PARA TODAS LAS CELDAS DE DATOS (columnas B a I)
-        for (let r = 2; r < aoaData.length; r++) {
-            for (let c = 1; c < 9; c++) {
-                const cell = XLSX.utils.encode_cell({ r: r, c: c });
-                if (ws[cell]) {
-                    ws[cell].s = {
-                        fill: { fgColor: { rgb: "FFFFFF" } },
-                        font: { color: { rgb: "000000" } },
-                        alignment: { horizontal: "left", vertical: "center", wrapText: true },
-                        border: borderStyle
-                    };
-                }
-            }
-        }
-        
-        // ✅ AJUSTAR ANCHO DE COLUMNAS
-        const colWidths = {
-            0: 15, // AREA
-            1: 20, // AREA O SISTEMA
-            2: 50, // DESCRIPCION DE ACTIVIDAD
-            3: 15, // TAG
-            4: 15, // PROG/NO PROG
-            5: 15, // ESTACION
-            6: 15, // AVANCE
-            7: 15, // OT
-            8: 25  // EJECUTANTE
-        };
-        
-        const cols = [];
-        for (let i = 0; i < 9; i++) {
-            cols.push({ wch: colWidths[i] });
-        }
-        ws['!cols'] = cols;
-        
-        // ✅ AJUSTAR ALTURA DE FILAS
-        ws['!rows'] = [{ hpt: 25 }, { hpt: 25 }]; // Fila de fecha y encabezados
-        
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Actividades");
-        XLSX.writeFile(wb, `Actividades_${fromDate || 'inicio'}_${toDate || 'hoy'}.xlsx`);
-        
-        closeExportModal();
-    })
-    .catch(error => {
-        console.error(error);
-        alert('Error al exportar los datos.');
+    const groupedData = {};
+    subareasOrder.forEach(area => groupedData[area] = []);
+    
+    filtered.forEach(rec => {
+        const subarea = String(rec['SUBÁREA'] || '').toUpperCase().trim();
+        if (groupedData[subarea]) groupedData[subarea].push(rec);
     });
+    
+    const rowsPerArea = 10;
+    const exportDate = getFechaColombia();
+    const headers = ["AREA", "AREA O SISTEMA", "DESCRIPCION DE ACTIVIDAD", "TAG", "PROG/NO PROG", "ESTACION", "AVANCE", "OT", "EJECUTANTE"];
+    const aoaData = [["FECHA", exportDate], headers];
+    
+    subareasOrder.forEach(area => {
+        const recordsOfArea = groupedData[area] || [];
+        const totalRows = Math.max(rowsPerArea, recordsOfArea.length);
+        
+        for (let i = 0; i < totalRows; i++) {
+            const rec = recordsOfArea[i];
+            if (rec) {
+                const avanceInfo = convertirAvanceParaMostrar(rec['AVANCE']);
+                
+                aoaData.push([
+                    area,
+                    String(rec['AREA'] || '').toUpperCase(),
+                    String(rec['Descripción'] || '').toUpperCase(),
+                    String(rec['TAG'] || '').toUpperCase(),
+                    String(rec['PROG/NÓ PROG'] || '').toUpperCase(),
+                    String(rec['ESTACION'] || '').toUpperCase(),
+                    avanceInfo.texto,
+                    String(rec['OT'] || '').toUpperCase(),
+                    String(rec['EJECUTANTE'] || '').toUpperCase()
+                ]);
+            } else {
+                aoaData.push([area, '', '', '', '', '', '', '', '']);
+            }
+        }
+    });
+    
+    const ws = XLSX.utils.aoa_to_sheet(aoaData);
+    const borderStyle = {
+        top: { style: "thin", color: { rgb: "000000" } },
+        bottom: { style: "thin", color: { rgb: "000000" } },
+        left: { style: "thin", color: { rgb: "000000" } },
+        right: { style: "thin", color: { rgb: "000000" } }
+    };
+    
+    ws['A1'].s = { fill: { fgColor: { rgb: "FF0000" } }, font: { color: { rgb: "FFFFFF" }, bold: true }, alignment: { horizontal: "center", vertical: "center" }, border: borderStyle };
+    ws['B1'].s = { fill: { fgColor: { rgb: "FF0000" } }, font: { color: { rgb: "FFFFFF" }, bold: true }, alignment: { horizontal: "center", vertical: "center" }, border: borderStyle };
+    
+    headers.forEach((h, i) => {
+        const cell = XLSX.utils.encode_cell({ r: 1, c: i });
+        ws[cell].s = { fill: { fgColor: { rgb: "FF0000" } }, font: { color: { rgb: "FFFFFF" }, bold: true }, alignment: { horizontal: "center", vertical: "center" }, border: borderStyle };
+    });
+    
+    let areaStartRow = 2;
+    subareasOrder.forEach(area => {
+        const recordsOfArea = groupedData[area] || [];
+        const totalRows = Math.max(rowsPerArea, recordsOfArea.length);
+        const areaEndRow = areaStartRow + totalRows - 1;
+        
+        ws['!merges'] = ws['!merges'] || [];
+        ws['!merges'].push({ s: { r: areaStartRow, c: 0 }, e: { r: areaEndRow, c: 0 } });
+        
+        for (let r = areaStartRow; r <= areaEndRow; r++) {
+            const cell = XLSX.utils.encode_cell({ r: r, c: 0 });
+            if (ws[cell]) {
+                ws[cell].s = { fill: { fgColor: { rgb: "FF0000" } }, font: { color: { rgb: "FFFFFF" }, bold: true, size: 10 }, alignment: { horizontal: "center", vertical: "center", wrapText: true }, border: borderStyle };
+            }
+        }
+        areaStartRow = areaEndRow + 1;
+    });
+    
+    for (let r = 2; r < aoaData.length; r++) {
+        for (let c = 1; c < 9; c++) {
+            const cell = XLSX.utils.encode_cell({ r: r, c: c });
+            if (ws[cell]) {
+                ws[cell].s = { fill: { fgColor: { rgb: "FFFFFF" } }, font: { color: { rgb: "000000" } }, alignment: { horizontal: "left", vertical: "center", wrapText: true }, border: borderStyle };
+            }
+        }
+    }
+    
+    ws['!cols'] = [{ wch: 15 }, { wch: 20 }, { wch: 50 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 25 }];
+    ws['!rows'] = [{ hpt: 25 }, { hpt: 25 }];
+    
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Actividades");
+    XLSX.writeFile(wb, `Actividades_${fromDate || 'inicio'}_${toDate || 'hoy'}.xlsx`);
+    
+    closeExportModal();
 }
 
 // ==========================================
-// CÓDIGO QR (GENERADO CON IMAGEN EXTERNA)
+// QR
 // ==========================================
 function showQRModal() {
     document.getElementById('qr-modal').style.display = 'flex';
-    
-    // URL de la app (se actualiza automáticamente)
     const appUrl = window.location.origin + window.location.pathname;
-    
-    // Genera la imagen del QR usando la API pública de qrserver.com
     const qrImg = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(appUrl)}" alt="QR Code" style="width: 250px; height: 250px;">`;
-    
-    // Muestra la imagen en el modal
     document.getElementById('qr-code').innerHTML = qrImg;
 }
 
@@ -799,10 +752,8 @@ function closeQRModal() {
 }
 
 function downloadQR() {
-    // Descarga la imagen del QR desde la API (convierte la imagen en descargable)
     const appUrl = window.location.origin + window.location.pathname;
     const url = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(appUrl)}`;
-    
     const link = document.createElement('a');
     link.download = 'QR_App_GestionActividades.png';
     link.href = url;
