@@ -36,22 +36,23 @@ function formatearFecha(fechaRec) {
 }
 
 // ==========================================
-// ✅ CONVERTIR AVANCE: Google Sheets usa decimal (1 = 100%, 0.5 = 50%)
+// ✅ CONVERTIR AVANCE PARA MOSTRAR
+// El Sheet guarda el valor tal cual (100 = 100%, 50 = 50%)
 // ==========================================
 function convertirAvanceParaMostrar(avanceRaw) {
     if (avanceRaw === null || avanceRaw === undefined || avanceRaw === '') {
         return { texto: '', numero: 0 };
     }
     
-    let valor = parseFloat(avanceRaw);
+    let valorStr = String(avanceRaw).replace('%', '').trim();
+    let valor = parseFloat(valorStr);
     
-    if (!isNaN(valor)) {
-        let avanceNum = valor * 100;
-        let texto = avanceNum % 1 === 0 ? avanceNum.toString() : avanceNum.toFixed(1);
-        return { texto: texto + '%', numero: avanceNum };
-    } else {
+    if (isNaN(valor)) {
         return { texto: String(avanceRaw), numero: 0 };
     }
+    
+    let texto = valor % 1 === 0 ? valor.toString() : valor.toFixed(1);
+    return { texto: texto + '%', numero: valor };
 }
 
 // ==========================================
@@ -78,19 +79,30 @@ window.onload = function() {
         }
     });
     
-    const btnOT = document.getElementById('btn-ot-toggle');
-    if (btnOT) {
-        btnOT.addEventListener('click', function() {
-            document.getElementById('ot-dropdown').style.display = 'block';
-        });
-    }
-    
     renderTable([]);
     
     if (localStorage.getItem('isAdminLoggedIn') === 'true') {
         adminLoginSuccess();
     }
+    
+    // ✅ Mostrar modal de bienvenida (solo 1 vez por sesión)
+    if (!sessionStorage.getItem('welcomeShown')) {
+        setTimeout(() => {
+            const welcomeModal = document.getElementById('welcome-modal');
+            if (welcomeModal) {
+                welcomeModal.style.display = 'flex';
+                sessionStorage.setItem('welcomeShown', 'true');
+            }
+        }, 500);
+    }
 };
+
+// ==========================================
+// ✅ CERRAR MODAL DE BIENVENIDA
+// ==========================================
+function closeWelcomeModal() {
+    document.getElementById('welcome-modal').style.display = 'none';
+}
 
 // ==========================================
 // AYUDA EN CAMPOS
@@ -187,7 +199,7 @@ function logoutAdmin() {
 }
 
 // ==========================================
-// MENÚ FILTROS COLABSABLE
+// MENÚ FILTROS COLAPSABLE
 // ==========================================
 function toggleMobileFilters(role) {
     const content = document.getElementById(role === 'user' ? 'user-filters-content' : 'admin-filters-content');
@@ -205,15 +217,11 @@ function closeHelpModal() {
     document.getElementById('help-modal').style.display = 'none';
 }
 
-// ==========================================
-// ✅ QUITAR FILTROS USUARIO NORMAL (tabla vacía)
-// ==========================================
 function clearUserFilters() {
     document.getElementById('user-filter-subarea').value = '';
     document.getElementById('user-date-from').value = '';
     document.getElementById('user-date-to').value = '';
     
-    // ✅ LIMPIAR TABLA Y CONTADOR (no cargar datos)
     document.getElementById('activity-counter').style.display = 'none';
     document.getElementById('activity-counter').innerText = '0 actividades encontradas';
     renderTable([]);
@@ -226,8 +234,15 @@ function setTodayFilter() {
     loadData();
 }
 
+function setTodayFilterAdmin() {
+    const hoy = getFechaColombia();
+    document.getElementById('filter-date-from').value = hoy;
+    document.getElementById('filter-date-to').value = hoy;
+    loadData();
+}
+
 // ==========================================
-// ✅ LEER DATOS DESDE GOOGLE SHEETS (JSONP - evita CORS)
+// ✅ LEER DATOS DESDE GOOGLE SHEETS (JSONP)
 // ==========================================
 function loadData() {
     const callbackName = 'jsonp_' + Date.now();
@@ -243,8 +258,6 @@ function loadData() {
             }
             
             allRecords = data.records;
-            
-            // APLICAR FILTROS
             let filtered = [...allRecords];
             
             if (isAdmin) {
@@ -271,7 +284,6 @@ function loadData() {
                 if (userDateTo) filtered = filtered.filter(r => formatearFecha(r['FECHA']) <= userDateTo);
             }
             
-            // ✅ ORDENAR POR SUBÁREA
             const subareasOrder = [
                 "MECANICA", "INSTRUMENTACIÓN", "ELÉCTRICO", "VALVULAS PSV Y PVV",
                 "A&C", "CBM", "VSD", "FACILIDADES", "OBREROS DE PATIO",
@@ -305,12 +317,10 @@ function loadData() {
         }
     };
     
-    // Crear el script JSONP
     const script = document.createElement('script');
     script.id = callbackName;
     script.src = SCRIPT_URL + '?callback=' + callbackName;
     
-    // ✅ SOLO mostrar error si los datos NO se recibieron
     script.onerror = function() {
         if (datosRecibidos) return;
         console.error('Error cargando el script JSONP');
@@ -321,15 +331,14 @@ function loadData() {
     
     document.body.appendChild(script);
     
-    // Limpiar el script después de 10 segundos
     setTimeout(() => {
         if (script.parentNode) script.remove();
         delete window[callbackName];
-    }, 10000);
+    }, 30000);
 }
 
 // ==========================================
-// RENDER TABLA (con conversión correcta de AVANCE)
+// RENDER TABLA
 // ==========================================
 function renderTable(records) {
     const tbody = document.getElementById('table-body');
@@ -350,6 +359,7 @@ function renderTable(records) {
         }
         
         const fechaTexto = formatearFecha(rec['FECHA']);
+        const idSeguro = String(rec.id).replace(/'/g, "\\'");
         
         const row = `
         <tr class="${rowClass}">
@@ -364,8 +374,8 @@ function renderTable(records) {
             <td>${fechaTexto}</td>
             <td>${String(rec['AREA'] || '').toUpperCase()}</td>
             <td class="actions">
-                <button class="btn-edit" onclick="editRecord(${rec.id})">Editar</button>
-                ${isAdmin ? `<button class="btn-delete" onclick="deleteRecord(${rec.id})">Eliminar</button>` : ''}
+                <button class="btn-edit" onclick="editRecord('${idSeguro}')">Editar</button>
+                ${isAdmin ? `<button class="btn-delete" onclick="deleteRecord('${idSeguro}')">Eliminar</button>` : ''}
             </td>
         </tr>`;
         tbody.innerHTML += row;
@@ -407,7 +417,7 @@ function sortRecords(records) {
 }
 
 // ==========================================
-// FILTROS ADMIN (Quitar filtro en admin sigue mostrando todo)
+// FILTROS ADMIN
 // ==========================================
 function clearFilters() {
     document.getElementById('search-descripcion').value = '';
@@ -420,13 +430,12 @@ function clearFilters() {
 }
 
 // ==========================================
-// ✅ MODAL CREAR (fecha automática y bloqueada)
+// MODAL CREAR
 // ==========================================
 function openModal() {
     document.getElementById('modal-title').innerText = 'Nueva Actividad';
     document.getElementById('record-id').value = '';
     
-    // ✅ FECHA AUTOMÁTICA (Colombia) Y BLOQUEADA
     document.getElementById('f-fecha').value = getFechaColombia();
     document.getElementById('f-fecha').readOnly = true;
     document.getElementById('f-fecha').style.backgroundColor = '#f1f5f9';
@@ -444,11 +453,14 @@ function openModal() {
 }
 
 // ==========================================
-// ✅ MODAL EDITAR (fecha editable)
+// MODAL EDITAR
 // ==========================================
 function editRecord(id) {
-    const rec = allRecords.find(r => r.id === id);
-    if (!rec) return;
+    const rec = allRecords.find(r => String(r.id) === String(id));
+    if (!rec) {
+        alert('No se encontró el registro');
+        return;
+    }
     
     document.getElementById('modal-title').innerText = 'Editar Actividad';
     document.getElementById('record-id').value = id;
@@ -464,7 +476,6 @@ function editRecord(id) {
     document.getElementById('f-ejecutante').value = String(rec['EJECUTANTE'] || '').toUpperCase();
     document.getElementById('f-subarea').value = String(rec['SUBÁREA'] || '').toUpperCase();
     
-    // ✅ FECHA EDITABLE AL EDITAR
     document.getElementById('f-fecha').value = formatearFecha(rec['FECHA']) || getFechaColombia();
     document.getElementById('f-fecha').readOnly = false;
     document.getElementById('f-fecha').style.backgroundColor = '#ffffff';
@@ -491,8 +502,10 @@ document.addEventListener('click', function(event) {
     const inputOT = document.getElementById('f-ot');
     const btnOT = document.getElementById('btn-ot-toggle');
     
-    if (dropdown && !dropdown.contains(event.target) && !inputOT.contains(event.target) && !btnOT.contains(event.target)) {
-        dropdown.style.display = 'none';
+    if (dropdown && inputOT && btnOT) {
+        if (!dropdown.contains(event.target) && !inputOT.contains(event.target) && !btnOT.contains(event.target)) {
+            dropdown.style.display = 'none';
+        }
     }
 });
 
@@ -521,65 +534,73 @@ function validateForm() {
 async function saveRecord() {
     if (!validateForm()) return;
 
-    const id = document.getElementById('record-id').value;
-    
-    const ejecutantesTexto = document.getElementById('f-ejecutante').value
-        .split('\n')
-        .map(nombre => nombre.trim().toUpperCase())
-        .filter(nombre => nombre !== '')
-        .join('\n');
-    
-    // ✅ CONVERTIR AVANCE: escribir "100" guarda "1" en Google Sheets
-    let avanceTexto = document.getElementById('f-avance').value.trim();
-    let avance = '';
-    if (avanceTexto !== '') {
-        let avanceNum = parseFloat(avanceTexto.replace('%', ''));
-        if (!isNaN(avanceNum)) {
-            let avanceDecimal = avanceNum / 100;
-            avance = avanceDecimal.toString();
-        } else {
-            avance = avanceTexto;
-        }
-    }
-    
-    const fields = {
-        "Descripción": document.getElementById('f-descripcion').value.trim().toUpperCase(),
-        "TAG": document.getElementById('f-tag').value.trim().toUpperCase(),
-        "PROG/NÓ PROG": document.getElementById('f-prog').value,
-        "ESTACION": document.getElementById('f-estacion').value,
-        "AVANCE": avance,
-        "OT": document.getElementById('f-ot').value.trim().toUpperCase(),
-        "EJECUTANTE": ejecutantesTexto,
-        "SUBÁREA": document.getElementById('f-subarea').value,
-        "FECHA": document.getElementById('f-fecha').value,
-        "AREA": document.getElementById('f-area').value.trim().toUpperCase()
-    };
-    
-    const payload = id 
-        ? { accion: "actualizar", id: parseInt(id), ...fields }
-        : { accion: "crear", ...fields };
+    const btnGuardar = document.querySelector('#modal .btn-save');
+    const textoOriginal = btnGuardar.innerHTML;
+    btnGuardar.disabled = true;
+    btnGuardar.innerHTML = '⏳ Guardando...';
 
     try {
-        const formData = new URLSearchParams();
-        formData.append('data', JSON.stringify(payload));
+        const id = document.getElementById('record-id').value;
         
-        const response = await fetch(SCRIPT_URL, {
+        const ejecutantesTexto = document.getElementById('f-ejecutante').value
+            .split('\n')
+            .map(nombre => nombre.trim().toUpperCase())
+            .filter(nombre => nombre !== '')
+            .join('\n');
+        
+        let avanceTexto = document.getElementById('f-avance').value.trim();
+        let avance = '';
+        if (avanceTexto !== '') {
+            let avanceNum = parseFloat(avanceTexto.replace('%', ''));
+            if (!isNaN(avanceNum)) {
+                avance = avanceNum.toString();
+            } else {
+                avance = avanceTexto;
+            }
+        }
+        
+        const fields = {
+            "Descripción": document.getElementById('f-descripcion').value.trim().toUpperCase(),
+            "TAG": document.getElementById('f-tag').value.trim().toUpperCase(),
+            "PROG/NÓ PROG": document.getElementById('f-prog').value,
+            "ESTACION": document.getElementById('f-estacion').value,
+            "AVANCE": avance,
+            "OT": document.getElementById('f-ot').value.trim().toUpperCase(),
+            "EJECUTANTE": ejecutantesTexto,
+            "SUBÁREA": document.getElementById('f-subarea').value,
+            "FECHA": document.getElementById('f-fecha').value,
+            "AREA": document.getElementById('f-area').value.trim().toUpperCase()
+        };
+        
+        const payload = id 
+            ? { accion: "actualizar", id: id, ...fields }
+            : { accion: "crear", ...fields };
+
+        console.log('=== ENVIANDO ===');
+        console.log('ID:', id);
+        console.log('Acción:', payload.accion);
+        console.log('AVANCE:', avance);
+
+        await fetch(SCRIPT_URL, {
             method: 'POST',
-            body: formData
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(payload)
         });
         
-        const result = await response.json();
+        console.log('✅ Petición enviada correctamente');
         
-        if (result.ok) {
-            closeModal();
-            loadData();
-            alert('✅ Actividad guardada correctamente');
-        } else {
-            alert('Error al guardar: ' + (result.error || 'Revisa los datos.'));
-        }
+        closeModal();
+        alert('✅ Actividad guardada correctamente');
+        
+        setTimeout(() => loadData(), 1000);
+        
     } catch (error) {
-        console.error(error);
-        alert('Error de conexión.');
+        console.error('❌ Error:', error);
+        alert('Error de conexión: ' + error.message);
+    } finally {
+        btnGuardar.disabled = false;
+        btnGuardar.innerHTML = textoOriginal;
     }
 }
 
@@ -590,25 +611,25 @@ async function deleteRecord(id) {
     if (!confirm('¿Seguro que deseas eliminar esta actividad?')) return;
     
     try {
-        const formData = new URLSearchParams();
-        formData.append('data', JSON.stringify({ accion: "eliminar", id: id }));
+        console.log('=== ELIMINANDO ===');
+        console.log('ID:', id);
         
-        const response = await fetch(SCRIPT_URL, {
+        await fetch(SCRIPT_URL, {
             method: 'POST',
-            body: formData
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ accion: "eliminar", id: String(id) })
         });
         
-        const result = await response.json();
+        console.log('✅ Petición de eliminación enviada');
         
-        if (result.ok) {
-            loadData();
-            alert('✅ Actividad eliminada correctamente');
-        } else {
-            alert('Error al eliminar: ' + (result.error || 'Desconocido'));
-        }
+        alert('✅ Actividad eliminada correctamente');
+        
+        setTimeout(() => loadData(), 1000);
+        
     } catch (error) {
-        console.error(error);
-        alert('Error de conexión.');
+        console.error('❌ Error:', error);
+        alert('Error de conexión: ' + error.message);
     }
 }
 
