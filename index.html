@@ -34,20 +34,7 @@
                 </svg>
             </div>
 
-            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                
-                <!-- ✅ MARCA PERSONAL - Badge del desarrollador -->
-                <div class="dev-brand" title="Full Stack Developer">
-                    <div class="dev-logo">JCH</div>
-                    <div class="dev-meta">
-                        <span class="dev-name">JUAN CARLOS HOLGUIN F.</span>
-                        <span class="dev-role">▸ FULL STACK · FRONTEND</span>
-                        <span class="dev-status">
-                            <span class="status-dot"></span> DISPONIBLE
-                        </span>
-                    </div>
-                </div>
-                
+            <div style="display: flex; gap: 10px; align-items: center;">
                 <span id="role-badge" style="padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; color: white;"></span>
                 
                 <button id="btn-admin-login" onclick="showAdminLogin()" class="btn-admin">🔒 Modo Admin</button>
@@ -157,35 +144,17 @@
             <tbody id="table-body"></tbody>
         </table>
 
-        <!-- ✅ FOOTER con marca personal -->
-        <footer class="app-footer">
-            <div class="footer-credit">⚡ DISEÑADO Y DESARROLLADO POR</div>
-            
-            <div class="footer-brand-final">
-                <pre class="footer-ascii">
- ██╗ ██████╗██╗  ██╗
- ██║██╔════╝██║  ██║
- ██║██║     ███████║
- ██║██║     ██╔══██║
- ██║╚██████╗██║  ██║
- ╚═╝ ╚═════╝╚═╝  ╚═╝
-                </pre>
-                <div class="footer-name">JUAN CARLOS HOLGUIN F.</div>
-                <div class="footer-role">▸ FULL STACK · FRONTEND ENGINEER</div>
-                <div class="footer-role">▸ UI/UX · BRANDING DIGITAL · 2026</div>
-                
-                <!-- ✅ Logo de CYMETRIA -->
-                <div class="footer-cimetria">
-                    <img src="image/cymetria.png" alt="CYMETRIA Medellín">
-                    <div class="cimetria-text">
-                        <strong>FORMADO EN</strong>
-                        <span>CYMETRIA MEDELLÍN</span>
-                    </div>
+        <!-- ✅ Firma minimalista al final -->
+        <footer class="app-footer-simple">
+            <div class="footer-brand-simple">
+                <img src="image/cymetria.png" alt="CYMETRIA Medellín" class="footer-logo-simple">
+                <div class="footer-info-simple">
+                    <div class="footer-name-simple">JUAN CARLOS HOLGUIN F.</div>
+                    <div class="footer-role-simple">▸ FULL STACK · FRONTEND ENGINEER · UI/UX · 2026</div>
                 </div>
             </div>
-            
-            <div class="footer-copy">
-                © <span id="current-year"></span> · Gestor de Actividades · Todos los derechos reservados
+            <div class="footer-copy-simple">
+                © <span id="current-year"></span> · Gestor de Actividades
             </div>
         </footer>
     </div>
@@ -365,9 +334,9 @@
         </div>
     </div>
 
-    <!-- ✅ Modal de bienvenida con marca personal -->
+    <!-- ✅ Modal de bienvenida -->
     <div id="welcome-modal" class="modal" style="display: none;">
-        <div class="modal-content" style="max-width: 520px; text-align: center;">
+        <div class="modal-content" style="max-width: 500px; text-align: center;">
             <div style="font-size: 50px; margin-bottom: 10px;">👋</div>
             <h2 style="color: var(--primary); margin-bottom: 15px;">¡Bienvenido al Gestor de Actividades!</h2>
             <p style="color: var(--text-light); margin-bottom: 15px; font-size: 0.95rem;">
@@ -387,21 +356,6 @@
                     💾 <strong>Confirma tu guardado:</strong> Al guardar, espera el mensaje de confirmación antes de cerrar la ventana.
                 </p>
             </div>
-
-            <!-- ✅ Marca personal en el modal de bienvenida -->
-            <div class="welcome-brand">
-                <div class="brand-logo">JCH</div>
-                <div class="brand-info">
-                    <div class="brand-name">JUAN CARLOS HOLGUIN F.</div>
-                    <div class="brand-role">▸ FULL STACK · FRONTEND ENGINEER</div>
-                    <div class="brand-role">▸ UI/UX · BRANDING DIGITAL · 2026</div>
-                    <div class="brand-cimetria">
-                        <img src="image/cymetria.png" alt="CYMETRIA Medellín">
-                        <span>Formado en CYMETRIA Medellín</span>
-                    </div>
-                </div>
-            </div>
-
             <div class="modal-actions" style="justify-content: center;">
                 <button onclick="closeWelcomeModal()" class="btn-save" style="padding: 12px 30px; font-size: 1rem;">
                     ✔️ Aceptar
