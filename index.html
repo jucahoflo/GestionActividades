@@ -320,7 +320,7 @@
         </div>
     </div>
 
-    <!-- ✅ NUEVO: Modal de bienvenida -->
+    <!-- ✅ Modal de bienvenida -->
     <div id="welcome-modal" class="modal" style="display: none;">
         <div class="modal-content" style="max-width: 500px; text-align: center;">
             <div style="font-size: 50px; margin-bottom: 10px;">👋</div>
@@ -339,11 +339,35 @@
                     📊 <strong>Usa los filtros:</strong> Puedes filtrar por <strong>subárea</strong> y <strong>rango de fechas</strong> para encontrar tus actividades rápidamente.
                 </p>
                 <p style="font-size: 0.9rem;">
-                    💾 <strong>Confirma tu guardado:</strong> Al guardar, espera el mensaje <strong>"✅ Actividad guardada correctamente"</strong> antes de cerrar la ventana.
+                    💾 <strong>Confirma tu guardado:</strong> Al guardar, espera el mensaje de confirmación antes de cerrar la ventana.
                 </p>
             </div>
             <div class="modal-actions" style="justify-content: center;">
                 <button onclick="closeWelcomeModal()" class="btn-save" style="padding: 12px 30px; font-size: 1rem;">
+                    ✔️ Aceptar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ Modal de agradecimiento al guardar -->
+    <div id="success-modal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 450px; text-align: center;">
+            <div style="font-size: 60px; margin-bottom: 10px;">🎉</div>
+            <h2 style="color: var(--success); margin-bottom: 15px;">¡Gracias por tu registro!</h2>
+            <p style="color: var(--text-light); margin-bottom: 20px; font-size: 1rem;">
+                Tu actividad ha sido guardada correctamente. Tu aporte ayuda a mantener el control de todas las actividades.
+            </p>
+            <div style="background: #d1fae5; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                <p style="font-size: 0.95rem; color: #065f46; font-weight: bold; margin: 0;">
+                    ✅ Actividad registrada exitosamente
+                </p>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 20px;">
+                💡 Recuerda: puedes verificarla haciendo clic en el botón <strong>📅 Hoy</strong>
+            </p>
+            <div class="modal-actions" style="justify-content: center;">
+                <button onclick="closeSuccessModal()" class="btn-save" style="padding: 12px 40px; font-size: 1rem;">
                     ✔️ Aceptar
                 </button>
             </div>

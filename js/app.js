@@ -37,7 +37,6 @@ function formatearFecha(fechaRec) {
 
 // ==========================================
 // ✅ CONVERTIR AVANCE PARA MOSTRAR
-// El Sheet guarda el valor tal cual (100 = 100%, 50 = 50%)
 // ==========================================
 function convertirAvanceParaMostrar(avanceRaw) {
     if (avanceRaw === null || avanceRaw === undefined || avanceRaw === '') {
@@ -102,6 +101,30 @@ window.onload = function() {
 // ==========================================
 function closeWelcomeModal() {
     document.getElementById('welcome-modal').style.display = 'none';
+}
+
+// ==========================================
+// ✅ MOSTRAR MODAL DE AGRADECIMIENTO
+// ==========================================
+function showSuccessModal() {
+    const modal = document.getElementById('success-modal');
+    if (modal) {
+        modal.style.display = 'flex';
+        
+        // Auto-cerrar después de 4 segundos
+        setTimeout(() => {
+            if (modal.style.display === 'flex') {
+                modal.style.display = 'none';
+            }
+        }, 4000);
+    }
+}
+
+// ==========================================
+// ✅ CERRAR MODAL DE AGRADECIMIENTO
+// ==========================================
+function closeSuccessModal() {
+    document.getElementById('success-modal').style.display = 'none';
 }
 
 // ==========================================
@@ -338,7 +361,7 @@ function loadData() {
 }
 
 // ==========================================
-// RENDER TABLA
+// RENDER TABLA (✅ Sin botón Eliminar)
 // ==========================================
 function renderTable(records) {
     const tbody = document.getElementById('table-body');
@@ -375,7 +398,6 @@ function renderTable(records) {
             <td>${String(rec['AREA'] || '').toUpperCase()}</td>
             <td class="actions">
                 <button class="btn-edit" onclick="editRecord('${idSeguro}')">Editar</button>
-                ${isAdmin ? `<button class="btn-delete" onclick="deleteRecord('${idSeguro}')">Eliminar</button>` : ''}
             </td>
         </tr>`;
         tbody.innerHTML += row;
@@ -591,7 +613,9 @@ async function saveRecord() {
         console.log('✅ Petición enviada correctamente');
         
         closeModal();
-        alert('✅ Actividad guardada correctamente');
+        
+        // ✅ Mostrar modal de agradecimiento
+        showSuccessModal();
         
         setTimeout(() => loadData(), 1000);
         
@@ -605,15 +629,12 @@ async function saveRecord() {
 }
 
 // ==========================================
-// ✅ ELIMINAR EN GOOGLE SHEETS
+// ELIMINAR (función conservada por si se necesita después)
 // ==========================================
 async function deleteRecord(id) {
     if (!confirm('¿Seguro que deseas eliminar esta actividad?')) return;
     
     try {
-        console.log('=== ELIMINANDO ===');
-        console.log('ID:', id);
-        
         await fetch(SCRIPT_URL, {
             method: 'POST',
             mode: 'no-cors',
@@ -621,10 +642,7 @@ async function deleteRecord(id) {
             body: JSON.stringify({ accion: "eliminar", id: String(id) })
         });
         
-        console.log('✅ Petición de eliminación enviada');
-        
         alert('✅ Actividad eliminada correctamente');
-        
         setTimeout(() => loadData(), 1000);
         
     } catch (error) {
