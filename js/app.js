@@ -397,9 +397,6 @@ function renderTable(records) {
     });
 }
 
-// ==========================================
-// ORDENAR TABLA
-// ==========================================
 function sortTable(field) {
     if (sortState.field === field) {
         sortState.direction = sortState.direction === 'asc' ? 'desc' : 'asc';
@@ -431,9 +428,6 @@ function sortRecords(records) {
     renderTable(sorted);
 }
 
-// ==========================================
-// FILTROS ADMIN
-// ==========================================
 function clearFilters() {
     document.getElementById('search-descripcion').value = '';
     document.getElementById('filter-subarea').value = '';
@@ -444,9 +438,6 @@ function clearFilters() {
     loadData();
 }
 
-// ==========================================
-// MODAL CREAR
-// ==========================================
 function openModal() {
     document.getElementById('modal-title').innerText = 'Nueva Actividad';
     document.getElementById('record-id').value = '';
@@ -467,9 +458,6 @@ function openModal() {
     document.getElementById('modal').style.display = 'flex';
 }
 
-// ==========================================
-// MODAL EDITAR
-// ==========================================
 function editRecord(id) {
     const rec = allRecords.find(r => String(r.id) === String(id));
     if (!rec) {
@@ -504,9 +492,6 @@ function closeModal() {
     document.getElementById('modal').style.display = 'none';
 }
 
-// ==========================================
-// MENÚ OT
-// ==========================================
 function selectOT(valor) {
     document.getElementById('f-ot').value = valor;
     document.getElementById('ot-dropdown').style.display = 'none';
@@ -524,9 +509,6 @@ document.addEventListener('click', function(event) {
     }
 });
 
-// ==========================================
-// VALIDACIÓN
-// ==========================================
 function validateForm() {
     const descripcion = document.getElementById('f-descripcion').value.trim().toUpperCase();
     const prog = document.getElementById('f-prog').value;
@@ -543,9 +525,6 @@ function validateForm() {
     return true;
 }
 
-// ==========================================
-// ✅ GUARDAR EN GOOGLE SHEETS
-// ==========================================
 async function saveRecord() {
     if (!validateForm()) return;
 
@@ -617,9 +596,6 @@ async function saveRecord() {
     }
 }
 
-// ==========================================
-// ELIMINAR (función conservada por si se necesita después)
-// ==========================================
 async function deleteRecord(id) {
     if (!confirm('¿Seguro que deseas eliminar esta actividad?')) return;
     
@@ -640,9 +616,6 @@ async function deleteRecord(id) {
     }
 }
 
-// ==========================================
-// EXPORTAR EXCEL
-// ==========================================
 function openExportModal() {
     document.getElementById('export-date-from').value = '';
     document.getElementById('export-date-to').value = '';
@@ -765,9 +738,6 @@ function exportExcel() {
     closeExportModal();
 }
 
-// ==========================================
-// QR
-// ==========================================
 function showQRModal() {
     document.getElementById('qr-modal').style.display = 'flex';
     const appUrl = window.location.origin + window.location.pathname;
