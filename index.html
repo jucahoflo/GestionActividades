@@ -69,6 +69,7 @@
             </div>
 
             <button onclick="openModal()" class="btn-new">➕ Nueva Actividad</button>
+            <button onclick="openModalDiaSiguiente()" class="btn-today">📅 Día Siguiente</button>
             <span id="user-message" style="color: #64748b; font-size: 0.9rem; align-self: center;">Seleccione subárea y rango de fechas para ver las actividades.</span>
         </div>
 
@@ -80,6 +81,7 @@
             <div id="admin-filters-content" class="filters-content">
                 <button onclick="setTodayFilterAdmin()" class="btn-today">📅 Hoy</button>
                 <button onclick="openModal()" class="btn-new">➕ Nueva Actividad</button>
+                <button onclick="openModalDiaSiguiente()" class="btn-today">📅 Día Siguiente</button>
                 
                 <div class="search-box">
                     <input type="text" id="search-descripcion" placeholder="🔍 Buscar por descripción..." oninput="loadData()">
@@ -144,7 +146,6 @@
             <tbody id="table-body"></tbody>
         </table>
 
-        <!-- ✅ Firma minimalista al final -->
         <footer class="app-footer-simple">
             <div class="footer-brand-simple">
                 <div class="footer-logo-block">
@@ -217,6 +218,7 @@
                 <li>Usa las fechas para filtrar por <strong>rango</strong>.</li>
                 <li>Haz clic en <strong>📅 Hoy</strong> para ver solo las actividades de hoy.</li>
                 <li>Pulsa <strong>➕ Nueva Actividad</strong> para crear una.</li>
+                <li>Pulsa <strong>📅 Día Siguiente</strong> para programar una actividad para mañana.</li>
                 <li>Si necesitas ayuda, usa la <strong>🧹 Quitar filtro</strong> para reiniciar.</li>
             </ul>
             <div class="modal-actions">
@@ -337,7 +339,6 @@
         </div>
     </div>
 
-    <!-- ✅ Modal de bienvenida -->
     <div id="welcome-modal" class="modal" style="display: none;">
         <div class="modal-content" style="max-width: 500px; text-align: center;">
             <div style="font-size: 50px; margin-bottom: 10px;">👋</div>
@@ -353,7 +354,7 @@
                     🔄 <strong>Evita duplicados:</strong> Si ya ves tu actividad en la lista, <u>NO</u> la vuelvas a crear. Si necesitas cambiar algo, usa el botón <strong>Editar</strong>.
                 </p>
                 <p style="margin-bottom: 10px; font-size: 0.9rem;">
-                    📊 <strong>Usa los filtros:</strong> Puedes filtrar por <strong>subárea</strong> y <strong>rango de fechas</strong> para encontrar tus actividades rápidamente.
+                    📅 <strong>Programa con anticipación:</strong> Usa el botón <strong>📅 Día Siguiente</strong> para dejar lista la actividad de mañana.
                 </p>
                 <p style="font-size: 0.9rem;">
                     💾 <strong>Confirma tu guardado:</strong> Al guardar, espera el mensaje de confirmación antes de cerrar la ventana.
@@ -367,20 +368,19 @@
         </div>
     </div>
 
-    <!-- ✅ Modal de agradecimiento al guardar -->
     <div id="success-modal" class="modal" style="display: none;">
         <div class="modal-content" style="max-width: 450px; text-align: center;">
             <div style="font-size: 60px; margin-bottom: 10px;">🎉</div>
-            <h2 style="color: var(--success); margin-bottom: 15px;">¡Gracias por tu registro!</h2>
-            <p style="color: var(--text-light); margin-bottom: 20px; font-size: 1rem;">
+            <h2 id="success-modal-title" style="color: var(--success); margin-bottom: 15px;">¡Gracias por tu registro!</h2>
+            <p id="success-modal-message" style="color: var(--text-light); margin-bottom: 20px; font-size: 1rem;">
                 Tu actividad ha sido guardada correctamente. Tu aporte ayuda a mantener el control de todas las actividades.
             </p>
             <div style="background: #d1fae5; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-                <p style="font-size: 0.95rem; color: #065f46; font-weight: bold; margin: 0;">
+                <p id="success-modal-badge" style="font-size: 0.95rem; color: #065f46; font-weight: bold; margin: 0;">
                     ✅ Actividad registrada exitosamente
                 </p>
             </div>
-            <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 20px;">
+            <p id="success-modal-hint" style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 20px;">
                 💡 Recuerda: puedes verificarla haciendo clic en el botón <strong>📅 Hoy</strong>
             </p>
             <div class="modal-actions" style="justify-content: center;">

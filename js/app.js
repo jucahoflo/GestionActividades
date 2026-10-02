@@ -108,18 +108,45 @@ function closeWelcomeModal() {
 }
 
 // ==========================================
-// ✅ MOSTRAR MODAL DE AGRADECIMIENTO
+// ✅ MOSTRAR MODAL DE AGRADECIMIENTO (con mensaje dinámico)
 // ==========================================
-function showSuccessModal() {
+function showSuccessModal(esDiaSiguiente) {
     const modal = document.getElementById('success-modal');
-    if (modal) {
-        modal.style.display = 'flex';
-        setTimeout(() => {
-            if (modal.style.display === 'flex') {
-                modal.style.display = 'none';
-            }
-        }, 4000);
+    if (!modal) return;
+    
+    const titulo = document.getElementById('success-modal-title');
+    const mensaje = document.getElementById('success-modal-message');
+    const badge = document.getElementById('success-modal-badge');
+    const hint = document.getElementById('success-modal-hint');
+    
+    if (esDiaSiguiente) {
+        const ahoraUTC = new Date();
+        const ahoraColombia = new Date(ahoraUTC.getTime() - (5 * 60 * 60 * 1000));
+        const mananaColombia = new Date(ahoraColombia.getTime() + (24 * 60 * 60 * 1000));
+        const fechaMananaTexto = mananaColombia.toLocaleDateString('es-CO', { 
+            day: '2-digit', 
+            month: 'long', 
+            year: 'numeric' 
+        });
+        
+        titulo.textContent = '¡Actividad programada para mañana!';
+        mensaje.textContent = 'Tu actividad ha sido registrada exitosamente. Ya está lista para ejecutarse el día de mañana.';
+        badge.innerHTML = '📅 Programación registrada para el ' + fechaMananaTexto;
+        hint.innerHTML = '💡 Mañana podrás filtrarla por <strong>📅 Hoy</strong> para completar los campos restantes.';
+    } else {
+        titulo.textContent = '¡Gracias por tu registro!';
+        mensaje.textContent = 'Tu actividad ha sido guardada correctamente. Tu aporte ayuda a mantener el control de todas las actividades.';
+        badge.innerHTML = '✅ Actividad registrada exitosamente';
+        hint.innerHTML = '💡 Recuerda: puedes verificarla haciendo clic en el botón <strong>📅 Hoy</strong>';
     }
+    
+    modal.style.display = 'flex';
+    
+    setTimeout(() => {
+        if (modal.style.display === 'flex') {
+            modal.style.display = 'none';
+        }
+    }, 4500);
 }
 
 function closeSuccessModal() {
@@ -438,14 +465,19 @@ function clearFilters() {
     loadData();
 }
 
+// ==========================================
+// MODAL CREAR (fecha de hoy)
+// ==========================================
 function openModal() {
     document.getElementById('modal-title').innerText = 'Nueva Actividad';
     document.getElementById('record-id').value = '';
+    document.getElementById('record-id').removeAttribute('data-dia-siguiente');
     
     document.getElementById('f-fecha').value = getFechaColombia();
     document.getElementById('f-fecha').readOnly = true;
     document.getElementById('f-fecha').style.backgroundColor = '#f1f5f9';
     document.getElementById('f-fecha').style.cursor = 'not-allowed';
+    document.getElementById('f-fecha').style.fontWeight = 'normal';
     
     const textInputs = ['f-descripcion', 'f-tag', 'f-avance', 'f-ot', 'f-area'];
     textInputs.forEach(id => document.getElementById(id).value = '');
@@ -458,6 +490,30 @@ function openModal() {
     document.getElementById('modal').style.display = 'flex';
 }
 
+// ==========================================
+// ✅ MODAL CREAR - DÍA SIGUIENTE (fecha de mañana)
+// ==========================================
+function openModalDiaSiguiente() {
+    const ahoraUTC = new Date();
+    const ahoraColombia = new Date(ahoraUTC.getTime() - (5 * 60 * 60 * 1000));
+    const mananaColombia = new Date(ahoraColombia.getTime() + (24 * 60 * 60 * 1000));
+    const fechaManana = mananaColombia.toISOString().split('T')[0];
+    
+    openModal();
+    
+    document.getElementById('f-fecha').value = fechaManana;
+    document.getElementById('f-fecha').readOnly = true;
+    document.getElementById('f-fecha').style.backgroundColor = '#fef3c7';
+    document.getElementById('f-fecha').style.cursor = 'not-allowed';
+    document.getElementById('f-fecha').style.fontWeight = 'bold';
+    
+    document.getElementById('modal-title').innerText = '📅 Nueva Actividad - Día Siguiente';
+    document.getElementById('record-id').dataset.diaSiguiente = 'true';
+}
+
+// ==========================================
+// MODAL EDITAR
+// ==========================================
 function editRecord(id) {
     const rec = allRecords.find(r => String(r.id) === String(id));
     if (!rec) {
@@ -467,6 +523,8 @@ function editRecord(id) {
     
     document.getElementById('modal-title').innerText = 'Editar Actividad';
     document.getElementById('record-id').value = id;
+    document.getElementById('record-id').removeAttribute('data-dia-siguiente');
+    
     document.getElementById('f-descripcion').value = String(rec['Descripción'] || '').toUpperCase();
     document.getElementById('f-tag').value = String(rec['TAG'] || '').toUpperCase();
     document.getElementById('f-prog').value = String(rec['PROG/NÓ PROG'] || '').toUpperCase();
@@ -483,6 +541,7 @@ function editRecord(id) {
     document.getElementById('f-fecha').readOnly = false;
     document.getElementById('f-fecha').style.backgroundColor = '#ffffff';
     document.getElementById('f-fecha').style.cursor = 'pointer';
+    document.getElementById('f-fecha').style.fontWeight = 'normal';
     
     document.getElementById('f-area').value = String(rec['AREA'] || '').toUpperCase();
     document.getElementById('modal').style.display = 'flex';
@@ -492,6 +551,9 @@ function closeModal() {
     document.getElementById('modal').style.display = 'none';
 }
 
+// ==========================================
+// MENÚ OT
+// ==========================================
 function selectOT(valor) {
     document.getElementById('f-ot').value = valor;
     document.getElementById('ot-dropdown').style.display = 'none';
@@ -509,6 +571,9 @@ document.addEventListener('click', function(event) {
     }
 });
 
+// ==========================================
+// VALIDACIÓN
+// ==========================================
 function validateForm() {
     const descripcion = document.getElementById('f-descripcion').value.trim().toUpperCase();
     const prog = document.getElementById('f-prog').value;
@@ -525,6 +590,9 @@ function validateForm() {
     return true;
 }
 
+// ==========================================
+// ✅ GUARDAR EN GOOGLE SHEETS
+// ==========================================
 async function saveRecord() {
     if (!validateForm()) return;
 
@@ -535,6 +603,7 @@ async function saveRecord() {
 
     try {
         const id = document.getElementById('record-id').value;
+        const esDiaSiguiente = document.getElementById('record-id').dataset.diaSiguiente === 'true';
         
         const ejecutantesTexto = document.getElementById('f-ejecutante').value
             .split('\n')
@@ -573,6 +642,7 @@ async function saveRecord() {
         console.log('=== ENVIANDO ===');
         console.log('ID:', id);
         console.log('Acción:', payload.accion);
+        console.log('Día siguiente:', esDiaSiguiente);
 
         await fetch(SCRIPT_URL, {
             method: 'POST',
@@ -584,7 +654,7 @@ async function saveRecord() {
         console.log('✅ Petición enviada correctamente');
         
         closeModal();
-        showSuccessModal();
+        showSuccessModal(esDiaSiguiente);
         setTimeout(() => loadData(), 1000);
         
     } catch (error) {
@@ -596,6 +666,9 @@ async function saveRecord() {
     }
 }
 
+// ==========================================
+// ELIMINAR (conservado por si se necesita después)
+// ==========================================
 async function deleteRecord(id) {
     if (!confirm('¿Seguro que deseas eliminar esta actividad?')) return;
     
@@ -616,6 +689,9 @@ async function deleteRecord(id) {
     }
 }
 
+// ==========================================
+// EXPORTAR EXCEL
+// ==========================================
 function openExportModal() {
     document.getElementById('export-date-from').value = '';
     document.getElementById('export-date-to').value = '';
@@ -738,6 +814,9 @@ function exportExcel() {
     closeExportModal();
 }
 
+// ==========================================
+// QR
+// ==========================================
 function showQRModal() {
     document.getElementById('qr-modal').style.display = 'flex';
     const appUrl = window.location.origin + window.location.pathname;
