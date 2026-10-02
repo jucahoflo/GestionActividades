@@ -4,10 +4,9 @@
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby73wBltoTjoLSkhGoDM-NYz7YCE3gvgUibLLCw7tnbcmugV4fDZPR8EMk2vjTg-_g0/exec';
 
 // ==========================================
-// ✅ DICCIONARIO DE AUTOCORRECCIÓN AMPLIADO
+// ✅ DICCIONARIO DE AUTOCORRECCIÓN
 // ==========================================
 const DICCIONARIO_CORRECCION = {
-    // 🔧 ABREVIACIONES TÉCNICAS GENERALES
     "MTTO": "MANTENIMIENTO",
     "MANTTO": "MANTENIMIENTO",
     "MANTNIMIENTO": "MANTENIMIENTO",
@@ -33,8 +32,6 @@ const DICCIONARIO_CORRECCION = {
     "INFOR": "INFORME",
     "CERT": "CERTIFICACIÓN",
     "PEND": "PENDIENTE",
-    
-    // ⚙️ MECÁNICA Y EQUIPOS
     "MOTORR": "MOTOR",
     "COMPRESOR": "COMPRESOR",
     "TURBINA": "TURBINA",
@@ -67,8 +64,6 @@ const DICCIONARIO_CORRECCION = {
     "HIDRAULICO": "HIDRÁULICO",
     "NEUMATICA": "NEUMÁTICA",
     "NEUMATICO": "NEUMÁTICO",
-    
-    // ⚡ ELÉCTRICO
     "ELEC": "ELÉCTRICO",
     "ELECTRICO": "ELÉCTRICO",
     "ELECTRICA": "ELÉCTRICA",
@@ -97,8 +92,6 @@ const DICCIONARIO_CORRECCION = {
     "LUMINARIA": "LUMINARIA",
     "LAMPARA": "LÁMPARA",
     "FOCO": "FOCO",
-    
-    // 🛢️ PETRÓLEO Y GAS
     "INYECCION": "INYECCIÓN",
     "PRODUCCION": "PRODUCCIÓN",
     "EXTRACCION": "EXTRACCIÓN",
@@ -144,8 +137,6 @@ const DICCIONARIO_CORRECCION = {
     "SURGENCIA": "SURGENCIA",
     "ARTIFICIAL": "ARTIFICIAL",
     "LEVANTAMIENTO": "LEVANTAMIENTO",
-    
-    // 💧 FLUIDOS Y PRESIÓN
     "PRESION": "PRESIÓN",
     "PRESURIZAR": "PRESURIZAR",
     "DESPRESURIZAR": "DESPRESURIZAR",
@@ -168,8 +159,6 @@ const DICCIONARIO_CORRECCION = {
     "SENSOR": "SENSOR",
     "INDICADOR": "INDICADOR",
     "ROTAMETRO": "ROTÁMETRO",
-    
-    // 📏 MEDICIÓN
     "MEDICION": "MEDICIÓN",
     "MEDIDOR": "MEDIDOR",
     "CALIBRACION": "CALIBRACIÓN",
@@ -187,8 +176,6 @@ const DICCIONARIO_CORRECCION = {
     "REGISTRO": "REGISTRO",
     "ANALOGO": "ANÁLOGO",
     "DIGITAL": "DIGITAL",
-    
-    // 🏗️ ESTRUCTURAS
     "ESTRUCTURA": "ESTRUCTURA",
     "SOPORTE": "SOPORTE",
     "BASE": "BASE",
@@ -210,8 +197,6 @@ const DICCIONARIO_CORRECCION = {
     "HERRAMIENTA": "HERRAMIENTA",
     "EQUIPO": "EQUIPO",
     "MAQUINA": "MÁQUINA",
-    
-    // 🏢 ÁREAS
     "TALLER": "TALLER",
     "CAMPAMENTO": "CAMPAMENTO",
     "OFICINA": "OFICINA",
@@ -225,8 +210,6 @@ const DICCIONARIO_CORRECCION = {
     "AREA": "ÁREA",
     "ZONA": "ZONA",
     "SECTOR": "SECTOR",
-    
-    // 🌿 HSEQ
     "AMBIENTAL": "AMBIENTAL",
     "CONTAMINACION": "CONTAMINACIÓN",
     "CONTAMINANTE": "CONTAMINANTE",
@@ -250,8 +233,6 @@ const DICCIONARIO_CORRECCION = {
     "GAFAS": "GAFAS",
     "ARNES": "ARNÉS",
     "TAPABOCAS": "TAPABOCAS",
-    
-    // 🔥 TRABAJOS ESPECIALES
     "CALIENTE": "CALIENTE",
     "PERMISO": "PERMISO",
     "FRIO": "FRÍO",
@@ -262,8 +243,6 @@ const DICCIONARIO_CORRECCION = {
     "IZAJE": "IZAJE",
     "ANDAMIO": "ANDAMIO",
     "ESCALERA": "ESCALERA",
-    
-    // 🧹 LIMPIEZA
     "LIMPIEZA": "LIMPIEZA",
     "ASEO": "ASEO",
     "BARRIDO": "BARRIDO",
@@ -279,8 +258,6 @@ const DICCIONARIO_CORRECCION = {
     "SOLVENTE": "SOLVENTE",
     "DESENGRASANTE": "DESENGRASANTE",
     "DETERGENTE": "DETERGENTE",
-    
-    // 🧪 CORRECCIONES ORTOGRÁFICAS
     "ATRAVEZ": "A TRAVÉS",
     "ATRAVES": "A TRAVÉS",
     "ASERCAR": "ACERCAR",
@@ -305,8 +282,6 @@ const DICCIONARIO_CORRECCION = {
     "TRAJO": "TRAJO",
     "PRODUJO": "PRODUJO",
     "CONDUJO": "CONDUJO",
-    
-    // 🔤 PALABRAS CON TILDE
     "ACCION": "ACCIÓN",
     "ADMINISTRACION": "ADMINISTRACIÓN",
     "APLICACION": "APLICACIÓN",
@@ -362,8 +337,6 @@ const DICCIONARIO_CORRECCION = {
     "SEPARACION": "SEPARACIÓN",
     "SOLUCION": "SOLUCIÓN",
     "SUPERVISION": "SUPERVISIÓN",
-    "TRANSFERENCIA": "TRANSFERENCIA",
-    "VERIFICACION": "VERIFICACIÓN",
     "VIBRACION": "VIBRACIÓN"
 };
 
@@ -377,8 +350,8 @@ function autocorregirTexto(texto) {
     resultado = resultado.replace(/\s+/g, ' ');
     
     const lineas = resultado.split('\n');
-    const lineasCorregidas = lineas.map(linea => {
-        return linea.split(/\s+/).map(palabra => {
+    const lineasCorregidas = lineas.map(function(linea) {
+        return linea.split(/\s+/).map(function(palabra) {
             const palabraMayus = palabra.toUpperCase().trim();
             if (DICCIONARIO_CORRECCION[palabraMayus]) {
                 return DICCIONARIO_CORRECCION[palabraMayus];
@@ -391,14 +364,11 @@ function autocorregirTexto(texto) {
 }
 
 // ==========================================
-// ✅ SISTEMA DE SUGERENCIAS TIPO GMAIL
+// ✅ SISTEMA DE SUGERENCIAS
 // ==========================================
-
-// Función: obtener sugerencias para la última palabra escrita
 function obtenerSugerencias(texto) {
     if (!texto || texto.length < 2) return [];
     
-    // Obtener la última palabra (después del último espacio)
     const textoUpper = texto.toUpperCase().trim();
     const palabras = textoUpper.split(/\s+/);
     const ultimaPalabra = palabras[palabras.length - 1] || '';
@@ -406,90 +376,84 @@ function obtenerSugerencias(texto) {
     if (ultimaPalabra.length < 2) return [];
     
     const sugerencias = [];
-    const yaAgregadas = new Set();
+    const yaAgregadas = {};
     
-    // 1. Coincidencia exacta en el diccionario
     if (DICCIONARIO_CORRECCION[ultimaPalabra]) {
         const sugerencia = DICCIONARIO_CORRECCION[ultimaPalabra];
-        if (sugerencia !== ultimaPalabra && !yaAgregadas.has(sugerencia)) {
+        if (sugerencia !== ultimaPalabra && !yaAgregadas[sugerencia]) {
             sugerencias.push({
                 original: ultimaPalabra,
                 sugerencia: sugerencia,
                 tipo: 'correccion'
             });
-            yaAgregadas.add(sugerencia);
+            yaAgregadas[sugerencia] = true;
         }
     }
     
-    // 2. Coincidencias parciales (palabras que empiezan con lo escrito)
-    Object.keys(DICCIONARIO_CORRECCION).forEach(clave => {
-        if (sugerencias.length >= 5) return;
-        
-        // Si la clave empieza con lo que el usuario escribió
-        if (clave.startsWith(ultimaPalabra) && clave !== ultimaPalabra) {
+    const claves = Object.keys(DICCIONARIO_CORRECCION);
+    for (let i = 0; i < claves.length; i++) {
+        if (sugerencias.length >= 5) break;
+        const clave = claves[i];
+        if (clave.indexOf(ultimaPalabra) === 0 && clave !== ultimaPalabra) {
             const sugerencia = DICCIONARIO_CORRECCION[clave];
-            if (!yaAgregadas.has(sugerencia) && sugerencia !== ultimaPalabra) {
+            if (!yaAgregadas[sugerencia] && sugerencia !== ultimaPalabra) {
                 sugerencias.push({
                     original: clave,
                     sugerencia: sugerencia,
                     tipo: 'sugerencia'
                 });
-                yaAgregadas.add(sugerencia);
+                yaAgregadas[sugerencia] = true;
             }
         }
-    });
+    }
     
-    // 3. Coincidencias en cualquier parte (búsqueda más amplia)
-    if (sugerencias.length < 5) {
-        Object.keys(DICCIONARIO_CORRECCION).forEach(clave => {
-            if (sugerencias.length >= 5) return;
-            
-            // Si la clave contiene lo que el usuario escribió
-            if (clave.includes(ultimaPalabra) && !clave.startsWith(ultimaPalabra) && clave !== ultimaPalabra) {
-                const sugerencia = DICCIONARIO_CORRECCION[clave];
-                if (!yaAgregadas.has(sugerencia) && sugerencia !== ultimaPalabra) {
-                    sugerencias.push({
-                        original: clave,
-                        sugerencia: sugerencia,
-                        tipo: 'similar'
-                    });
-                    yaAgregadas.add(sugerencia);
-                }
+    for (let i = 0; i < claves.length; i++) {
+        if (sugerencias.length >= 5) break;
+        const clave = claves[i];
+        if (clave.indexOf(ultimaPalabra) > 0 && clave !== ultimaPalabra) {
+            const sugerencia = DICCIONARIO_CORRECCION[clave];
+            if (!yaAgregadas[sugerencia] && sugerencia !== ultimaPalabra) {
+                sugerencias.push({
+                    original: clave,
+                    sugerencia: sugerencia,
+                    tipo: 'similar'
+                });
+                yaAgregadas[sugerencia] = true;
             }
-        });
+        }
     }
     
     return sugerencias.slice(0, 5);
 }
 
-// Función: aplicar una sugerencia al texto
-function aplicarSugerencia(inputId, sugerencia, tipo) {
+// ==========================================
+// ✅ APLICAR SUGERENCIA
+// ==========================================
+function aplicarSugerencia(inputId, sugerencia) {
     const input = document.getElementById(inputId);
     if (!input) return;
     
     let texto = input.value;
-    const textoUpper = texto.toUpperCase().trim();
-    const palabras = textoUpper.split(/\s+/);
-    const ultimaPalabra = palabras[palabras.length - 1] || '';
+    const textoUpper = texto.toUpperCase();
+    const ultimaPalabra = textoUpper.split(/\s+/).pop() || '';
     
-    // Reemplazar la última palabra con la sugerencia
-    // Preservar el texto original hasta la última palabra
-    const textoAntes = texto.substring(0, texto.toUpperCase().lastIndexOf(ultimaPalabra));
+    const posicion = textoUpper.lastIndexOf(ultimaPalabra);
+    const textoAntes = texto.substring(0, posicion);
     
     input.value = textoAntes + sugerencia.sugerencia + ' ';
     input.focus();
     
-    // Colocar el cursor al final
     const len = input.value.length;
     if (input.setSelectionRange) {
         input.setSelectionRange(len, len);
     }
     
-    // Ocultar sugerencias
     ocultarSugerencias(inputId);
 }
 
-// Función: mostrar sugerencias para un input
+// ==========================================
+// ✅ MOSTRAR SUGERENCIAS
+// ==========================================
 function mostrarSugerencias(inputId) {
     const input = document.getElementById(inputId);
     const box = document.getElementById('sugerencias-' + inputId);
@@ -503,26 +467,30 @@ function mostrarSugerencias(inputId) {
         return;
     }
     
-    // Renderizar sugerencias
     box.innerHTML = '';
-    sugerencias.forEach((sug, index) => {
+    for (let i = 0; i < sugerencias.length; i++) {
+        const sug = sugerencias[i];
         const item = document.createElement('div');
-        item.className = 'suggestion-item' + (index === 0 ? ' selected' : '');
-        item.innerHTML = `
-            <span class="suggestion-icon">✨</span>
-            <span class="suggestion-text">${sug.sugerencia}</span>
-            <span class="suggestion-hint">Tab</span>
-        `;
-        item.onclick = function() {
-            aplicarSugerencia(inputId, sug, sug.tipo);
-        };
+        item.className = 'suggestion-item' + (i === 0 ? ' selected' : '');
+        item.innerHTML = '<span class="suggestion-icon">✨</span>' +
+                        '<span class="suggestion-text">' + sug.sugerencia + '</span>' +
+                        '<span class="suggestion-hint">Tab</span>';
+        
+        (function(inputIdLocal, sugLocal) {
+            item.onclick = function() {
+                aplicarSugerencia(inputIdLocal, sugLocal);
+            };
+        })(inputId, sug);
+        
         box.appendChild(item);
-    });
+    }
     
     box.classList.add('active');
 }
 
-// Función: ocultar sugerencias
+// ==========================================
+// ✅ OCULTAR SUGERENCIAS
+// ==========================================
 function ocultarSugerencias(inputId) {
     const box = document.getElementById('sugerencias-' + inputId);
     if (box) {
@@ -530,13 +498,21 @@ function ocultarSugerencias(inputId) {
     }
 }
 
-// Función: manejar teclado (Tab, Enter, Escape, Flechas)
+// ==========================================
+// ✅ MANEJO DE TECLADO
+// ==========================================
 function manejarTecladoSugerencias(event, inputId) {
     const box = document.getElementById('sugerencias-' + inputId);
     if (!box || !box.classList.contains('active')) return;
     
     const items = box.querySelectorAll('.suggestion-item');
-    let selectedIndex = Array.from(items).findIndex(i => i.classList.contains('selected'));
+    let selectedIndex = -1;
+    for (let i = 0; i < items.length; i++) {
+        if (items[i].classList.contains('selected')) {
+            selectedIndex = i;
+            break;
+        }
+    }
     
     if (event.key === 'Tab' || event.key === 'Enter') {
         event.preventDefault();
@@ -560,30 +536,31 @@ function manejarTecladoSugerencias(event, inputId) {
     }
 }
 
-// Función: inicializar sistema de sugerencias en un input
+// ==========================================
+// ✅ INICIALIZAR SUGERENCIAS
+// ==========================================
 function inicializarSugerencias(inputId) {
     const input = document.getElementById(inputId);
     if (!input) return;
     
-    // Al escribir, mostrar sugerencias
     input.addEventListener('input', function() {
         mostrarSugerencias(inputId);
     });
     
-    // Al presionar tecla
     input.addEventListener('keydown', function(event) {
         manejarTecladoSugerencias(event, inputId);
     });
     
-    // Al perder foco, ocultar (con delay para permitir clic)
     input.addEventListener('blur', function() {
-        setTimeout(() => {
+        setTimeout(function() {
             ocultarSugerencias(inputId);
         }, 200);
     });
 }
 
+// ==========================================
 // ESTADO GLOBAL
+// ==========================================
 let allRecords = [];
 let sortState = { field: '', direction: 'asc' };
 let isAdmin = false;
@@ -598,7 +575,7 @@ function getFechaColombia() {
 }
 
 // ==========================================
-// ✅ CONVERTIR FECHA DE GOOGLE SHEETS A TEXTO
+// ✅ CONVERTIR FECHA
 // ==========================================
 function formatearFecha(fechaRec) {
     if (!fechaRec) return '';
@@ -616,7 +593,7 @@ function formatearFecha(fechaRec) {
 }
 
 // ==========================================
-// ✅ CONVERTIR AVANCE PARA MOSTRAR
+// ✅ CONVERTIR AVANCE
 // ==========================================
 function convertirAvanceParaMostrar(avanceRaw) {
     if (avanceRaw === null || avanceRaw === undefined || avanceRaw === '') {
@@ -649,7 +626,7 @@ window.onload = function() {
     document.getElementById('role-badge').style.background = '#64748b';
     
     const textInputs = ['f-descripcion', 'f-tag', 'f-avance', 'f-ot', 'f-area'];
-    textInputs.forEach(id => {
+    textInputs.forEach(function(id) {
         const input = document.getElementById(id);
         if (input) {
             input.addEventListener('input', function() {
@@ -658,7 +635,6 @@ window.onload = function() {
         }
     });
     
-    // ✅ Inicializar sistema de sugerencias
     inicializarSugerencias('f-descripcion');
     inicializarSugerencias('f-area');
     inicializarSugerencias('f-ejecutante');
@@ -670,7 +646,7 @@ window.onload = function() {
     }
     
     if (!sessionStorage.getItem('welcomeShown')) {
-        setTimeout(() => {
+        setTimeout(function() {
             const welcomeModal = document.getElementById('welcome-modal');
             if (welcomeModal) {
                 welcomeModal.style.display = 'flex';
@@ -684,27 +660,28 @@ window.onload = function() {
         yearEl.textContent = new Date().getFullYear();
     }
     
-    // Cerrar sugerencias al hacer clic fuera
     document.addEventListener('click', function(event) {
-        ['f-descripcion', 'f-area', 'f-ejecutante'].forEach(id => {
+        const inputs = ['f-descripcion', 'f-area', 'f-ejecutante'];
+        for (let i = 0; i < inputs.length; i++) {
+            const id = inputs[i];
             const input = document.getElementById(id);
             const box = document.getElementById('sugerencias-' + id);
             if (input && box && !input.contains(event.target) && !box.contains(event.target)) {
                 ocultarSugerencias(id);
             }
-        });
+        }
     });
 };
 
 // ==========================================
-// ✅ CERRAR MODAL DE BIENVENIDA
+// CERRAR BIENVENIDA
 // ==========================================
 function closeWelcomeModal() {
     document.getElementById('welcome-modal').style.display = 'none';
 }
 
 // ==========================================
-// ✅ MOSTRAR MODAL DE AGRADECIMIENTO
+// MODAL AGRADECIMIENTO
 // ==========================================
 function showSuccessModal(esDiaSiguiente) {
     const modal = document.getElementById('success-modal');
@@ -731,14 +708,14 @@ function showSuccessModal(esDiaSiguiente) {
         hint.innerHTML = '💡 Mañana podrás filtrarla por <strong>📅 Hoy</strong> para completar los campos restantes.';
     } else {
         titulo.textContent = '¡Gracias por tu registro!';
-        mensaje.textContent = 'Tu actividad ha sido guardada correctamente. Tu aporte ayuda a mantener el control de todas las actividades.';
+        mensaje.textContent = 'Tu actividad ha sido guardada correctamente.';
         badge.innerHTML = '✅ Actividad registrada exitosamente';
         hint.innerHTML = '💡 Recuerda: puedes verificarla haciendo clic en el botón <strong>📅 Hoy</strong>';
     }
     
     modal.style.display = 'flex';
     
-    setTimeout(() => {
+    setTimeout(function() {
         if (modal.style.display === 'flex') {
             modal.style.display = 'none';
         }
@@ -754,16 +731,16 @@ function closeSuccessModal() {
 // ==========================================
 function showFieldHelp(field) {
     const helpTexts = {
-        'descripcion': 'Escribe una descripción clara y concisa. Verás sugerencias automáticas mientras escribes. Presiona Tab o haz clic para aplicarlas.',
-        'tag': 'Escribe el TAG identificador del equipo. Ej: TAG-001.',
+        'descripcion': 'Escribe una descripción. Verás sugerencias automáticas mientras escribes.',
+        'tag': 'Escribe el TAG identificador del equipo.',
         'prog': 'Selecciona P si es Programada, o NP si es No Programada.',
-        'estacion': 'Selecciona la estación donde se realizará la actividad.',
-        'avance': 'Escribe el porcentaje (0-100). Se agrega el símbolo %.',
-        'ot': 'Escribe la Orden de Trabajo. Puedes usar PTE si está pendiente.',
+        'estacion': 'Selecciona la estación.',
+        'avance': 'Escribe el porcentaje (0-100).',
+        'ot': 'Escribe la Orden de Trabajo.',
         'ejecutante': 'Escribe los nombres, uno por línea.',
-        'subarea': 'Selecciona la subárea a la que pertenece.',
-        'fecha': 'La fecha se llena automáticamente al crear. Al editar, se puede cambiar.',
-        'area': 'Escribe el área o sistema general. Verás sugerencias automáticas.'
+        'subarea': 'Selecciona la subárea.',
+        'fecha': 'La fecha se llena automáticamente.',
+        'area': 'Escribe el área o sistema general.'
     };
     document.getElementById('field-help-text').innerText = helpTexts[field] || 'Este campo es obligatorio.';
     document.getElementById('field-help-modal').style.display = 'flex';
@@ -881,7 +858,7 @@ function setTodayFilterAdmin() {
 }
 
 // ==========================================
-// ✅ LEER DATOS DESDE GOOGLE SHEETS (JSONP)
+// LEER DATOS (JSONP)
 // ==========================================
 function loadData() {
     const callbackName = 'jsonp_' + Date.now();
@@ -897,7 +874,7 @@ function loadData() {
             }
             
             allRecords = data.records;
-            let filtered = [...allRecords];
+            let filtered = allRecords.slice();
             
             if (isAdmin) {
                 const subareaFilter = document.getElementById('filter-subarea').value;
@@ -907,20 +884,20 @@ function loadData() {
                 const dateFrom = document.getElementById('filter-date-from').value;
                 const dateTo = document.getElementById('filter-date-to').value;
                 
-                if (subareaFilter) filtered = filtered.filter(r => String(r['SUBÁREA'] || '').toUpperCase() === subareaFilter);
-                if (searchTerm) filtered = filtered.filter(r => String(r['Descripción'] || '').toUpperCase().includes(searchTerm.toUpperCase()));
-                if (estacionFilter) filtered = filtered.filter(r => String(r['ESTACION'] || '').toUpperCase() === estacionFilter);
-                if (progFilter) filtered = filtered.filter(r => String(r['PROG/NÓ PROG'] || '').toUpperCase() === progFilter);
-                if (dateFrom) filtered = filtered.filter(r => formatearFecha(r['FECHA']) >= dateFrom);
-                if (dateTo) filtered = filtered.filter(r => formatearFecha(r['FECHA']) <= dateTo);
+                if (subareaFilter) filtered = filtered.filter(function(r) { return String(r['SUBÁREA'] || '').toUpperCase() === subareaFilter; });
+                if (searchTerm) filtered = filtered.filter(function(r) { return String(r['Descripción'] || '').toUpperCase().indexOf(searchTerm.toUpperCase()) !== -1; });
+                if (estacionFilter) filtered = filtered.filter(function(r) { return String(r['ESTACION'] || '').toUpperCase() === estacionFilter; });
+                if (progFilter) filtered = filtered.filter(function(r) { return String(r['PROG/NÓ PROG'] || '').toUpperCase() === progFilter; });
+                if (dateFrom) filtered = filtered.filter(function(r) { return formatearFecha(r['FECHA']) >= dateFrom; });
+                if (dateTo) filtered = filtered.filter(function(r) { return formatearFecha(r['FECHA']) <= dateTo; });
             } else {
                 const userSubareaFilter = document.getElementById('user-filter-subarea').value;
                 const userDateFrom = document.getElementById('user-date-from').value;
                 const userDateTo = document.getElementById('user-date-to').value;
                 
-                if (userSubareaFilter) filtered = filtered.filter(r => String(r['SUBÁREA'] || '').toUpperCase() === userSubareaFilter);
-                if (userDateFrom) filtered = filtered.filter(r => formatearFecha(r['FECHA']) >= userDateFrom);
-                if (userDateTo) filtered = filtered.filter(r => formatearFecha(r['FECHA']) <= userDateTo);
+                if (userSubareaFilter) filtered = filtered.filter(function(r) { return String(r['SUBÁREA'] || '').toUpperCase() === userSubareaFilter; });
+                if (userDateFrom) filtered = filtered.filter(function(r) { return formatearFecha(r['FECHA']) >= userDateFrom; });
+                if (userDateTo) filtered = filtered.filter(function(r) { return formatearFecha(r['FECHA']) <= userDateTo; });
             }
             
             const subareasOrder = [
@@ -929,7 +906,7 @@ function loadData() {
                 "CAMPAMENTERO", "HSEQ"
             ];
             
-            filtered.sort((a, b) => {
+            filtered.sort(function(a, b) {
                 const subA = String(a['SUBÁREA'] || '').toUpperCase().trim();
                 const subB = String(b['SUBÁREA'] || '').toUpperCase().trim();
                 const indexA = subareasOrder.indexOf(subA);
@@ -941,7 +918,7 @@ function loadData() {
             
             if (!isAdmin) {
                 document.getElementById('activity-counter').style.display = 'block';
-                document.getElementById('activity-counter').innerText = `${filtered.length} actividades encontradas`;
+                document.getElementById('activity-counter').innerText = filtered.length + ' actividades encontradas';
             }
             
             if (sortState.field) {
@@ -970,7 +947,7 @@ function loadData() {
     
     document.body.appendChild(script);
     
-    setTimeout(() => {
+    setTimeout(function() {
         if (script.parentNode) script.remove();
         delete window[callbackName];
     }, 30000);
@@ -983,7 +960,7 @@ function renderTable(records) {
     const tbody = document.getElementById('table-body');
     tbody.innerHTML = '';
     
-    records.forEach(rec => {
+    records.forEach(function(rec) {
         const avanceInfo = convertirAvanceParaMostrar(rec['AVANCE']);
         const avance = avanceInfo.texto;
         const avanceNum = avanceInfo.numero;
@@ -1000,22 +977,21 @@ function renderTable(records) {
         const fechaTexto = formatearFecha(rec['FECHA']);
         const idSeguro = String(rec.id).replace(/'/g, "\\'");
         
-        const row = `
-        <tr class="${rowClass}">
-            <td>${String(rec['Descripción'] || '').toUpperCase()}</td>
-            <td>${String(rec['TAG'] || '').toUpperCase()}</td>
-            <td>${String(rec['PROG/NÓ PROG'] || '').toUpperCase()}</td>
-            <td>${String(rec['ESTACION'] || '').toUpperCase()}</td>
-            <td>${avance}</td>
-            <td>${String(rec['OT'] || '').toUpperCase()}</td>
-            <td>${String(rec['EJECUTANTE'] || '').toUpperCase()}</td>
-            <td>${String(rec['SUBÁREA'] || '').toUpperCase()}</td>
-            <td>${fechaTexto}</td>
-            <td>${String(rec['AREA'] || '').toUpperCase()}</td>
-            <td class="actions">
-                <button class="btn-edit" onclick="editRecord('${idSeguro}')">Editar</button>
-            </td>
-        </tr>`;
+        const row = '<tr class="' + rowClass + '">' +
+            '<td>' + String(rec['Descripción'] || '').toUpperCase() + '</td>' +
+            '<td>' + String(rec['TAG'] || '').toUpperCase() + '</td>' +
+            '<td>' + String(rec['PROG/NÓ PROG'] || '').toUpperCase() + '</td>' +
+            '<td>' + String(rec['ESTACION'] || '').toUpperCase() + '</td>' +
+            '<td>' + avance + '</td>' +
+            '<td>' + String(rec['OT'] || '').toUpperCase() + '</td>' +
+            '<td>' + String(rec['EJECUTANTE'] || '').toUpperCase() + '</td>' +
+            '<td>' + String(rec['SUBÁREA'] || '').toUpperCase() + '</td>' +
+            '<td>' + fechaTexto + '</td>' +
+            '<td>' + String(rec['AREA'] || '').toUpperCase() + '</td>' +
+            '<td class="actions">' +
+                '<button class="btn-edit" onclick="editRecord(\'' + idSeguro + '\')">Editar</button>' +
+            '</td>' +
+        '</tr>';
         tbody.innerHTML += row;
     });
 }
@@ -1029,13 +1005,13 @@ function sortTable(field) {
     }
     loadData();
     
-    document.querySelectorAll('th').forEach(th => th.innerHTML = th.innerHTML.replace(' ⬆', ' ⬍').replace(' ⬇', ' ⬍'));
-    const clickedTh = [...document.querySelectorAll('th')].find(th => th.innerText.includes(field));
+    document.querySelectorAll('th').forEach(function(th) { th.innerHTML = th.innerHTML.replace(' ⬆', ' ⬍').replace(' ⬇', ' ⬍'); });
+    const clickedTh = Array.from(document.querySelectorAll('th')).find(function(th) { return th.innerText.indexOf(field) !== -1; });
     if (clickedTh) clickedTh.innerHTML = clickedTh.innerHTML.replace(' ⬍', sortState.direction === 'asc' ? ' ⬆' : ' ⬇');
 }
 
 function sortRecords(records) {
-    const sorted = [...records].sort((a, b) => {
+    const sorted = records.slice().sort(function(a, b) {
         let valA = String(a[sortState.field] || '').toLowerCase();
         let valB = String(b[sortState.field] || '').toLowerCase();
         
@@ -1076,7 +1052,7 @@ function openModal() {
     document.getElementById('f-fecha').style.fontWeight = 'normal';
     
     const textInputs = ['f-descripcion', 'f-tag', 'f-avance', 'f-ot', 'f-area'];
-    textInputs.forEach(id => document.getElementById(id).value = '');
+    textInputs.forEach(function(id) { document.getElementById(id).value = ''; });
     
     document.getElementById('f-prog').value = '';
     document.getElementById('f-estacion').value = '';
@@ -1086,9 +1062,6 @@ function openModal() {
     document.getElementById('modal').style.display = 'flex';
 }
 
-// ==========================================
-// ✅ MODAL CREAR - DÍA SIGUIENTE
-// ==========================================
 function openModalDiaSiguiente() {
     const ahoraUTC = new Date();
     const ahoraColombia = new Date(ahoraUTC.getTime() - (5 * 60 * 60 * 1000));
@@ -1098,9 +1071,7 @@ function openModalDiaSiguiente() {
     openModal();
     
     document.getElementById('f-fecha').value = fechaManana;
-    document.getElementById('f-fecha').readOnly = true;
     document.getElementById('f-fecha').style.backgroundColor = '#fef3c7';
-    document.getElementById('f-fecha').style.cursor = 'not-allowed';
     document.getElementById('f-fecha').style.fontWeight = 'bold';
     
     document.getElementById('modal-title').innerText = '📅 Nueva Actividad - Día Siguiente';
@@ -1111,7 +1082,7 @@ function openModalDiaSiguiente() {
 // MODAL EDITAR
 // ==========================================
 function editRecord(id) {
-    const rec = allRecords.find(r => String(r.id) === String(id));
+    const rec = allRecords.find(function(r) { return String(r.id) === String(id); });
     if (!rec) {
         alert('No se encontró el registro');
         return;
@@ -1145,7 +1116,6 @@ function editRecord(id) {
 
 function closeModal() {
     document.getElementById('modal').style.display = 'none';
-    // Ocultar sugerencias al cerrar
     ocultarSugerencias('f-descripcion');
     ocultarSugerencias('f-area');
     ocultarSugerencias('f-ejecutante');
@@ -1191,7 +1161,7 @@ function validateForm() {
 }
 
 // ==========================================
-// ✅ GUARDAR EN GOOGLE SHEETS (con autocorrección)
+// GUARDAR
 // ==========================================
 async function saveRecord() {
     if (!validateForm()) return;
@@ -1205,14 +1175,13 @@ async function saveRecord() {
         const id = document.getElementById('record-id').value;
         const esDiaSiguiente = document.getElementById('record-id').dataset.diaSiguiente === 'true';
         
-        // ✅ Aplicar autocorrección
         const descripcionCorregida = autocorregirTexto(document.getElementById('f-descripcion').value.toUpperCase());
         const areaCorregida = autocorregirTexto(document.getElementById('f-area').value.toUpperCase());
         
         const ejecutantesCorregidos = document.getElementById('f-ejecutante').value
             .split('\n')
-            .map(nombre => autocorregirTexto(nombre.trim().toUpperCase()))
-            .filter(nombre => nombre !== '')
+            .map(function(nombre) { return autocorregirTexto(nombre.trim().toUpperCase()); })
+            .filter(function(nombre) { return nombre !== ''; })
             .join('\n');
         
         let avanceTexto = document.getElementById('f-avance').value.trim();
@@ -1240,13 +1209,12 @@ async function saveRecord() {
         };
         
         const payload = id 
-            ? { accion: "actualizar", id: id, ...fields }
-            : { accion: "crear", ...fields };
+            ? Object.assign({ accion: "actualizar", id: id }, fields)
+            : Object.assign({ accion: "crear" }, fields);
 
         console.log('=== ENVIANDO ===');
         console.log('ID:', id);
         console.log('Acción:', payload.accion);
-        console.log('Día siguiente:', esDiaSiguiente);
 
         await fetch(SCRIPT_URL, {
             method: 'POST',
@@ -1255,11 +1223,9 @@ async function saveRecord() {
             body: JSON.stringify(payload)
         });
         
-        console.log('✅ Petición enviada correctamente');
-        
         closeModal();
         showSuccessModal(esDiaSiguiente);
-        setTimeout(() => loadData(), 1000);
+        setTimeout(function() { loadData(); }, 1000);
         
     } catch (error) {
         console.error('❌ Error:', error);
@@ -1271,7 +1237,7 @@ async function saveRecord() {
 }
 
 // ==========================================
-// ELIMINAR (conservado)
+// ELIMINAR
 // ==========================================
 async function deleteRecord(id) {
     if (!confirm('¿Seguro que deseas eliminar esta actividad?')) return;
@@ -1284,8 +1250,8 @@ async function deleteRecord(id) {
             body: JSON.stringify({ accion: "eliminar", id: String(id) })
         });
         
-        alert('✅ Actividad eliminada correctamente');
-        setTimeout(() => loadData(), 1000);
+        alert('✅ Actividad eliminada');
+        setTimeout(function() { loadData(); }, 1000);
         
     } catch (error) {
         console.error('❌ Error:', error);
@@ -1310,9 +1276,9 @@ function exportExcel() {
     const fromDate = document.getElementById('export-date-from').value;
     const toDate = document.getElementById('export-date-to').value;
     
-    let filtered = [...allRecords];
-    if (fromDate) filtered = filtered.filter(r => formatearFecha(r['FECHA']) >= fromDate);
-    if (toDate) filtered = filtered.filter(r => formatearFecha(r['FECHA']) <= toDate);
+    let filtered = allRecords.slice();
+    if (fromDate) filtered = filtered.filter(function(r) { return formatearFecha(r['FECHA']) >= fromDate; });
+    if (toDate) filtered = filtered.filter(function(r) { return formatearFecha(r['FECHA']) <= toDate; });
     
     if (filtered.length === 0) {
         alert('No hay actividades en el rango seleccionado.');
@@ -1327,9 +1293,9 @@ function exportExcel() {
     ];
     
     const groupedData = {};
-    subareasOrder.forEach(area => groupedData[area] = []);
+    subareasOrder.forEach(function(area) { groupedData[area] = []; });
     
-    filtered.forEach(rec => {
+    filtered.forEach(function(rec) {
         const subarea = String(rec['SUBÁREA'] || '').toUpperCase().trim();
         if (groupedData[subarea]) groupedData[subarea].push(rec);
     });
@@ -1339,7 +1305,7 @@ function exportExcel() {
     const headers = ["AREA", "AREA O SISTEMA", "DESCRIPCION DE ACTIVIDAD", "TAG", "PROG/NO PROG", "ESTACION", "AVANCE", "OT", "EJECUTANTE"];
     const aoaData = [["FECHA", exportDate], headers];
     
-    subareasOrder.forEach(area => {
+    subareasOrder.forEach(function(area) {
         const recordsOfArea = groupedData[area] || [];
         const totalRows = Math.max(rowsPerArea, recordsOfArea.length);
         
@@ -1347,7 +1313,6 @@ function exportExcel() {
             const rec = recordsOfArea[i];
             if (rec) {
                 const avanceInfo = convertirAvanceParaMostrar(rec['AVANCE']);
-                
                 aoaData.push([
                     area,
                     String(rec['AREA'] || '').toUpperCase(),
@@ -1376,13 +1341,13 @@ function exportExcel() {
     ws['A1'].s = { fill: { fgColor: { rgb: "FF0000" } }, font: { color: { rgb: "FFFFFF" }, bold: true }, alignment: { horizontal: "center", vertical: "center" }, border: borderStyle };
     ws['B1'].s = { fill: { fgColor: { rgb: "FF0000" } }, font: { color: { rgb: "FFFFFF" }, bold: true }, alignment: { horizontal: "center", vertical: "center" }, border: borderStyle };
     
-    headers.forEach((h, i) => {
+    headers.forEach(function(h, i) {
         const cell = XLSX.utils.encode_cell({ r: 1, c: i });
         ws[cell].s = { fill: { fgColor: { rgb: "FF0000" } }, font: { color: { rgb: "FFFFFF" }, bold: true }, alignment: { horizontal: "center", vertical: "center" }, border: borderStyle };
     });
     
     let areaStartRow = 2;
-    subareasOrder.forEach(area => {
+    subareasOrder.forEach(function(area) {
         const recordsOfArea = groupedData[area] || [];
         const totalRows = Math.max(rowsPerArea, recordsOfArea.length);
         const areaEndRow = areaStartRow + totalRows - 1;
@@ -1413,7 +1378,7 @@ function exportExcel() {
     
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Actividades");
-    XLSX.writeFile(wb, `Actividades_${fromDate || 'inicio'}_${toDate || 'hoy'}.xlsx`);
+    XLSX.writeFile(wb, 'Actividades_' + (fromDate || 'inicio') + '_' + (toDate || 'hoy') + '.xlsx');
     
     closeExportModal();
 }
@@ -1424,7 +1389,7 @@ function exportExcel() {
 function showQRModal() {
     document.getElementById('qr-modal').style.display = 'flex';
     const appUrl = window.location.origin + window.location.pathname;
-    const qrImg = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(appUrl)}" alt="QR Code" style="width: 250px; height: 250px;">`;
+    const qrImg = '<img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=' + encodeURIComponent(appUrl) + '" alt="QR Code" style="width: 250px; height: 250px;">';
     document.getElementById('qr-code').innerHTML = qrImg;
 }
 
@@ -1434,7 +1399,7 @@ function closeQRModal() {
 
 function downloadQR() {
     const appUrl = window.location.origin + window.location.pathname;
-    const url = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(appUrl)}`;
+    const url = 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=' + encodeURIComponent(appUrl);
     const link = document.createElement('a');
     link.download = 'QR_App_GestionActividades.png';
     link.href = url;
