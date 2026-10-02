@@ -183,6 +183,76 @@ tr.avance-0:hover { background-color: #fecaca; }
     letter-spacing: 0.3px;
 }
 
+/* ========================================== */
+/* ✅ SISTEMA DE SUGERENCIAS (tipo Gmail) */
+/* ========================================== */
+
+.input-with-suggestions {
+    position: relative;
+    width: 100%;
+}
+
+.suggestions-box {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    z-index: 2000;
+    max-height: 200px;
+    overflow-y: auto;
+    display: none;
+    margin-top: 4px;
+}
+
+.suggestions-box.active {
+    display: block;
+}
+
+.suggestion-item {
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid #f1f5f9;
+    transition: background 0.15s;
+}
+
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+
+.suggestion-item:hover,
+.suggestion-item.selected {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.suggestion-item .suggestion-icon {
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+.suggestion-item .suggestion-text {
+    flex-grow: 1;
+}
+
+.suggestion-item .suggestion-hint {
+    font-size: 0.7rem;
+    color: #94a3b8;
+    background: #f1f5f9;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-family: 'Courier New', monospace;
+}
+
+/* En móvil, hacer las sugerencias más altas para mejor toque */
 @media (max-width: 768px) {
     #app-view { padding: 1rem; }
     .header { flex-direction: column; align-items: flex-start; gap: 10px; }
@@ -217,5 +287,10 @@ tr.avance-0:hover { background-color: #fecaca; }
     
     .footer-logo-simple {
         height: 40px;
+    }
+    
+    .suggestion-item {
+        padding: 14px 15px;
+        font-size: 1rem;
     }
 }

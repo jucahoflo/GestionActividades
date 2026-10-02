@@ -5,11 +5,8 @@ const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby73wBltoTjoLSkhGoDM
 
 // ==========================================
 // ✅ DICCIONARIO DE AUTOCORRECCIÓN AMPLIADO
-// Se aplica al texto antes de guardar.
-// Funciona en TODOS los dispositivos (PC, Android, iOS).
 // ==========================================
 const DICCIONARIO_CORRECCION = {
-    
     // 🔧 ABREVIACIONES TÉCNICAS GENERALES
     "MTTO": "MANTENIMIENTO",
     "MANTTO": "MANTENIMIENTO",
@@ -35,69 +32,43 @@ const DICCIONARIO_CORRECCION = {
     "REP": "REPORTE",
     "INFOR": "INFORME",
     "CERT": "CERTIFICACIÓN",
-    "PTE": "PENDIENTE",
     "PEND": "PENDIENTE",
     
-    // ⚙️ MECÁNICA Y EQUIPOS ROTATIVOS
+    // ⚙️ MECÁNICA Y EQUIPOS
     "MOTORR": "MOTOR",
-    "MOTORES": "MOTORES",
-    "BOMBAS": "BOMBAS",
-    "BOMBA": "BOMBA",
     "COMPRESOR": "COMPRESOR",
-    "COMPRESORES": "COMPRESORES",
     "TURBINA": "TURBINA",
-    "TURBINAS": "TURBINAS",
     "GENERADOR": "GENERADOR",
-    "GENERADORES": "GENERADORES",
     "VENTILADOR": "VENTILADOR",
-    "EXTRACTOR": "EXTRACTOR",
     "REDUCTOR": "REDUCTOR",
     "ACOPLE": "ACOPLE",
-    "ACOPLES": "ACOPLES",
     "RODAMIENTO": "RODAMIENTO",
     "RODAMIENTOS": "RODAMIENTOS",
     "SELLO": "SELLO",
-    "SELLOS": "SELLOS",
     "EMPAQUE": "EMPAQUE",
-    "EMPAQUES": "EMPAQUES",
     "BUJE": "BUJE",
-    "BUJES": "BUJES",
     "PIÑON": "PIÑÓN",
-    "PIÑONES": "PIÑONES",
     "ENGRANAJE": "ENGRANAJE",
-    "ENGRANAJES": "ENGRANAJES",
     "CORREA": "CORREA",
-    "CORREAS": "CORREAS",
     "CADENA": "CADENA",
-    "CADENAS": "CADENAS",
     "POLEA": "POLEA",
-    "POLEAS": "POLEAS",
     "MANIFOLD": "MANIFOLD",
-    "TURBOCARGADOR": "TURBOCARGADOR",
     "INYECTOR": "INYECTOR",
-    "INYECTORES": "INYECTORES",
     "CULATA": "CULATA",
-    "CULATAS": "CULATAS",
     "CAMISA": "CAMISA",
-    "CAMISAS": "CAMISAS",
     "PISTON": "PISTÓN",
-    "PISTONES": "PISTONES",
     "CIGUEÑAL": "CIGÜEÑAL",
     "ARBOL": "ÁRBOL",
-    "LEVAS": "LEVAS",
     "VALVULA": "VÁLVULA",
     "VALVULAS": "VÁLVULAS",
-    "TAPA": "TAPA",
-    "TAPAS": "TAPAS",
     "MOTOBOMBA": "MOTOBOMBA",
-    "MOTOBOMBAS": "MOTOBOMBAS",
     "ELECTROBOMBA": "ELECTROBOMBA",
     "HIDRAULICA": "HIDRÁULICA",
     "HIDRAULICO": "HIDRÁULICO",
     "NEUMATICA": "NEUMÁTICA",
     "NEUMATICO": "NEUMÁTICO",
     
-    // ⚡ ELÉCTRICO Y POTENCIA
+    // ⚡ ELÉCTRICO
     "ELEC": "ELÉCTRICO",
     "ELECTRICO": "ELÉCTRICO",
     "ELECTRICA": "ELÉCTRICA",
@@ -105,116 +76,68 @@ const DICCIONARIO_CORRECCION = {
     "ELECTRONICO": "ELECTRÓNICO",
     "ELECTRONICA": "ELECTRÓNICA",
     "TABLERO": "TABLERO",
-    "TABLEROS": "TABLEROS",
     "BREAKER": "BREAKER",
-    "BREAKERS": "BREAKERS",
     "INTERRUPTOR": "INTERRUPTOR",
     "CONTACTOR": "CONTACTOR",
-    "CONTACTORES": "CONTACTORES",
     "RELE": "RELÉ",
-    "RELES": "RELÉS",
     "FUSIBLE": "FUSIBLE",
-    "FUSIBLES": "FUSIBLES",
     "TRANSFORMADOR": "TRANSFORMADOR",
-    "TRANSFORMADORES": "TRANSFORMADORES",
     "VARIADOR": "VARIADOR",
-    "VARIADORES": "VARIADORES",
     "ARRANCADOR": "ARRANCADOR",
-    "ARRANCADORES": "ARRANCADORES",
     "CABLEADO": "CABLEADO",
-    "CABLE": "CABLE",
-    "CABLES": "CABLES",
     "BORNERA": "BORNERA",
-    "BORNERAS": "BORNERAS",
     "TERMINAL": "TERMINAL",
-    "TERMINALES": "TERMINALES",
     "CONEXION": "CONEXIÓN",
-    "CONEXIONES": "CONEXIONES",
     "TIERRA": "TIERRA",
-    "POLO": "POLO",
-    "POLOS": "POLOS",
-    "FASE": "FASE",
-    "FASES": "FASES",
     "MONOFASICO": "MONOFÁSICO",
     "TRIFASICO": "TRIFÁSICO",
     "TRIFASICA": "TRIFÁSICA",
     "MONOFASICA": "MONOFÁSICA",
-    "TRANSFORMACION": "TRANSFORMACIÓN",
-    "TRANSFORMADORR": "TRANSFORMADOR",
-    "VARIADORR": "VARIADOR",
     "ILUMINACION": "ILUMINACIÓN",
     "LUMINARIA": "LUMINARIA",
-    "LUMINARIAS": "LUMINARIAS",
     "LAMPARA": "LÁMPARA",
-    "LAMPARAS": "LÁMPARAS",
     "FOCO": "FOCO",
-    "FOCOS": "FOCOS",
     
-    // 🛢️ PETRÓLEO, GAS Y POZOS
+    // 🛢️ PETRÓLEO Y GAS
     "INYECCION": "INYECCIÓN",
-    "INYECCIONES": "INYECCIONES",
-    "INYECTORA": "INYECTORA",
     "PRODUCCION": "PRODUCCIÓN",
-    "PRODUCCIONES": "PRODUCCIONES",
     "EXTRACCION": "EXTRACCIÓN",
     "REFINACION": "REFINACIÓN",
     "PERFORACION": "PERFORACIÓN",
-    "PERFORADORA": "PERFORADORA",
     "CABEZA": "CABEZA",
     "CABEZAL": "CABEZAL",
     "POZO": "POZO",
-    "POZOS": "POZOS",
     "YACIMIENTO": "YACIMIENTO",
-    "YACIMIENTOS": "YACIMIENTOS",
     "CRUDO": "CRUDO",
     "GASODUCTO": "GASODUCTO",
     "OLEODUCTO": "OLEODUCTO",
     "POLIDUCTO": "POLIDUCTO",
     "DUCTO": "DUCTO",
-    "DUCTOS": "DUCTOS",
     "LINEA": "LÍNEA",
-    "LINEAS": "LÍNEAS",
     "TUBERIA": "TUBERÍA",
-    "TUBERIAS": "TUBERÍAS",
     "TUBO": "TUBO",
-    "TUBOS": "TUBOS",
     "FLANGE": "FLANGE",
-    "FLANGES": "FLANGES",
     "BRIDA": "BRIDA",
-    "BRIDAS": "BRIDAS",
     "CODO": "CODO",
-    "CODOS": "CODOS",
     "REDUCCION": "REDUCCIÓN",
-    "REDUCCIONES": "REDUCCIONES",
     "NIPLE": "NIPLE",
-    "NIPLES": "NIPLES",
     "UNION": "UNIÓN",
-    "UNIONES": "UNIONES",
     "SEPARADOR": "SEPARADOR",
-    "SEPARADORES": "SEPARADORES",
     "TANQUE": "TANQUE",
-    "TANQUES": "TANQUES",
     "TANQUILLA": "TANQUILLA",
     "DEPOSITO": "DEPÓSITO",
-    "DEPOSITOS": "DEPÓSITOS",
     "GUNBARREL": "GUNBARREL",
     "HEADER": "HEADER",
     "MULTIPLE": "MÚLTIPLE",
-    "MULTIPLES": "MÚLTIPLES",
     "ESTRANGULADOR": "ESTRANGULADOR",
     "MACAROLLA": "MACAROLLA",
     "CABILLA": "CABILLA",
-    "CABILLAS": "CABILLAS",
     "VARILLA": "VARILLA",
-    "VARILLAS": "VARILLAS",
     "BALANCIN": "BALANCÍN",
-    "BALANCINES": "BALANCINES",
     "UNIDAD": "UNIDAD",
     "BOMBEO": "BOMBEO",
     "MECANICO": "MECÁNICO",
     "MECANICA": "MECÁNICA",
-    "MECANICOS": "MECÁNICOS",
-    "MECANICAS": "MECÁNICAS",
     "PISTONEO": "PISTONEO",
     "SWAB": "SWAB",
     "SWABEO": "SWABEO",
@@ -224,204 +147,124 @@ const DICCIONARIO_CORRECCION = {
     
     // 💧 FLUIDOS Y PRESIÓN
     "PRESION": "PRESIÓN",
-    "PRESIONES": "PRESIONES",
     "PRESURIZAR": "PRESURIZAR",
     "DESPRESURIZAR": "DESPRESURIZAR",
-    "DESPRESURIZACION": "DESPRESURIZACIÓN",
     "TEMPERATURA": "TEMPERATURA",
-    "TEMPERATURAS": "TEMPERATURAS",
     "VISCOSIDAD": "VISCOSIDAD",
     "DENSIDAD": "DENSIDAD",
     "GRAVEDAD": "GRAVEDAD",
     "CAUDAL": "CAUDAL",
-    "CAUDALES": "CAUDALES",
     "FLUJO": "FLUJO",
-    "FLUJOS": "FLUJOS",
     "FUGA": "FUGA",
-    "FUGAS": "FUGAS",
     "GOTEO": "GOTEO",
     "DERRAME": "DERRAME",
-    "DERRAMES": "DERRAMES",
     "MANOMETRO": "MANÓMETRO",
-    "MANOMETROS": "MANÓMETROS",
     "TERMOMETRO": "TERMÓMETRO",
-    "TERMOMETROS": "TERMÓMETROS",
     "CAUDALIMETRO": "CAUDALÍMETRO",
     "FLUJOMETRO": "FLUJÓMETRO",
     "PRESOSTATO": "PRESOSTATO",
     "TERMOSTATO": "TERMOSTATO",
     "TRANSMISOR": "TRANSMISOR",
-    "TRANSMISORES": "TRANSMISORES",
     "SENSOR": "SENSOR",
-    "SENSORES": "SENSORES",
     "INDICADOR": "INDICADOR",
-    "INDICADORES": "INDICADORES",
     "ROTAMETRO": "ROTÁMETRO",
-    "ROTAMETROS": "ROTÁMETROS",
     
-    // 📏 MEDICIÓN E INSTRUMENTACIÓN
+    // 📏 MEDICIÓN
     "MEDICION": "MEDICIÓN",
-    "MEDICIONES": "MEDICIONES",
     "MEDIDOR": "MEDIDOR",
-    "MEDIDORES": "MEDIDORES",
     "CALIBRACION": "CALIBRACIÓN",
-    "CALIBRACIONES": "CALIBRACIONES",
     "PATRON": "PATRÓN",
-    "PATRONES": "PATRONES",
     "INSTRUMENTO": "INSTRUMENTO",
-    "INSTRUMENTOS": "INSTRUMENTOS",
     "INSTRUMENTACION": "INSTRUMENTACIÓN",
     "VERIFICACION": "VERIFICACIÓN",
-    "VERIFICACIONES": "VERIFICACIONES",
     "AJUSTE": "AJUSTE",
-    "AJUSTES": "AJUSTES",
     "TOLERANCIA": "TOLERANCIA",
-    "TOLERANCIAS": "TOLERANCIAS",
     "PRECISION": "PRECISIÓN",
     "EXACTITUD": "EXACTITUD",
     "RANGO": "RANGO",
-    "RANGOS": "RANGOS",
     "ESCALA": "ESCALA",
-    "ESCALAS": "ESCALAS",
     "LECTURA": "LECTURA",
-    "LECTURAS": "LECTURAS",
     "REGISTRO": "REGISTRO",
-    "REGISTROS": "REGISTROS",
     "ANALOGO": "ANÁLOGO",
-    "ANALOGICA": "ANALÓGICA",
-    "ANALOGICO": "ANALÓGICO",
     "DIGITAL": "DIGITAL",
-    "DIGITALES": "DIGITALES",
     
-    // 🏗️ ESTRUCTURAS Y TALLER
+    // 🏗️ ESTRUCTURAS
     "ESTRUCTURA": "ESTRUCTURA",
-    "ESTRUCTURAS": "ESTRUCTURAS",
     "SOPORTE": "SOPORTE",
-    "SOPORTES": "SOPORTES",
     "BASE": "BASE",
-    "BASES": "BASES",
     "PLACA": "PLACA",
-    "PLACAS": "PLACAS",
     "PERFIL": "PERFIL",
-    "PERFILES": "PERFILES",
     "VIGA": "VIGA",
-    "VIGAS": "VIGAS",
     "COLUMNA": "COLUMNA",
-    "COLUMNAS": "COLUMNAS",
     "TRAVIESA": "TRAVIESA",
-    "TRAVIESAS": "TRAVIESAS",
     "SOLDADURA": "SOLDADURA",
-    "SOLDADURAS": "SOLDADURAS",
     "SOLDAR": "SOLDAR",
     "SUELDA": "SUELDA",
     "ELECTRODO": "ELECTRODO",
-    "ELECTRODOS": "ELECTRODOS",
     "ESMERILAR": "ESMERILAR",
-    "ESMERILADO": "ESMERILADO",
     "CORTE": "CORTE",
-    "CORTES": "CORTES",
     "TALADRO": "TALADRO",
-    "TALADROS": "TALADROS",
     "BROCA": "BROCA",
-    "BROCAS": "BROCAS",
     "LLAVE": "LLAVE",
-    "LLAVES": "LLAVES",
     "DADO": "DADO",
-    "DADOS": "DADOS",
     "HERRAMIENTA": "HERRAMIENTA",
-    "HERRAMIENTAS": "HERRAMIENTAS",
     "EQUIPO": "EQUIPO",
-    "EQUIPOS": "EQUIPOS",
     "MAQUINA": "MÁQUINA",
-    "MAQUINAS": "MÁQUINAS",
     
-    // 🏢 ÁREAS Y UBICACIONES
+    // 🏢 ÁREAS
     "TALLER": "TALLER",
-    "TALLERES": "TALLERES",
     "CAMPAMENTO": "CAMPAMENTO",
-    "CAMPAMENTOS": "CAMPAMENTOS",
     "OFICINA": "OFICINA",
-    "OFICINAS": "OFICINAS",
     "BODEGA": "BODEGA",
-    "BODEGAS": "BODEGAS",
     "ALMACEN": "ALMACÉN",
-    "ALMACENES": "ALMACENES",
     "PATIO": "PATIO",
-    "PATIOS": "PATIOS",
     "FACILIDAD": "FACILIDAD",
     "FACILIDADES": "FACILIDADES",
     "ESTACION": "ESTACIÓN",
-    "ESTACIONES": "ESTACIONES",
     "LOCACION": "LOCACIÓN",
-    "LOCACIONES": "LOCACIONES",
     "AREA": "ÁREA",
-    "AREAS": "ÁREAS",
     "ZONA": "ZONA",
-    "ZONAS": "ZONAS",
     "SECTOR": "SECTOR",
-    "SECTORES": "SECTORES",
     
-    // 🌿 MEDIO AMBIENTE Y SEGURIDAD (HSEQ)
+    // 🌿 HSEQ
     "AMBIENTAL": "AMBIENTAL",
-    "AMBIENTALES": "AMBIENTALES",
     "CONTAMINACION": "CONTAMINACIÓN",
     "CONTAMINANTE": "CONTAMINANTE",
     "RESIDUO": "RESIDUO",
-    "RESIDUOS": "RESIDUOS",
     "VERTIMIENTO": "VERTIMIENTO",
-    "VERTIMIENTOS": "VERTIMIENTOS",
     "SEGURIDAD": "SEGURIDAD",
     "INDUSTRIAL": "INDUSTRIAL",
-    "INDUSTRIALES": "INDUSTRIALES",
     "SALUD": "SALUD",
     "OCUPACIONAL": "OCUPACIONAL",
     "RIESGO": "RIESGO",
-    "RIESGOS": "RIESGOS",
     "PELIGRO": "PELIGRO",
-    "PELIGROS": "PELIGROS",
     "ACCIDENTE": "ACCIDENTE",
-    "ACCIDENTES": "ACCIDENTES",
     "INCIDENTE": "INCIDENTE",
-    "INCIDENTES": "INCIDENTES",
     "EMERGENCIA": "EMERGENCIA",
-    "EMERGENCIAS": "EMERGENCIAS",
     "EVACUACION": "EVACUACIÓN",
     "PROTECCION": "PROTECCIÓN",
-    "PROTECCIONES": "PROTECCIONES",
     "ELEMENTO": "ELEMENTO",
-    "ELEMENTOS": "ELEMENTOS",
     "CASCO": "CASCO",
     "GUANTES": "GUANTES",
     "BOTAS": "BOTAS",
     "GAFAS": "GAFAS",
     "ARNES": "ARNÉS",
-    "ARNESES": "ARNESES",
     "TAPABOCAS": "TAPABOCAS",
     
-    // 🔥 TRABAJOS EN CALIENTE Y ESPECIALES
+    // 🔥 TRABAJOS ESPECIALES
     "CALIENTE": "CALIENTE",
-    "CALIENTES": "CALIENTES",
     "PERMISO": "PERMISO",
-    "PERMISOS": "PERMISOS",
     "FRIO": "FRÍO",
-    "FRIOS": "FRÍOS",
     "ALTURA": "ALTURA",
-    "ALTURAS": "ALTURAS",
     "ESPACIO": "ESPACIO",
     "CONFINADO": "CONFINADO",
-    "CONFINADOS": "CONFINADOS",
     "EXCAVACION": "EXCAVACIÓN",
-    "EXCAVACIONES": "EXCAVACIONES",
     "IZAJE": "IZAJE",
-    "IZAJES": "IZAJES",
     "ANDAMIO": "ANDAMIO",
-    "ANDAMIOS": "ANDAMIOS",
     "ESCALERA": "ESCALERA",
-    "ESCALERAS": "ESCALERAS",
     
-    // 🧹 LIMPIEZA Y ASEO
+    // 🧹 LIMPIEZA
     "LIMPIEZA": "LIMPIEZA",
-    "LIMPIEZAS": "LIMPIEZAS",
     "ASEO": "ASEO",
     "BARRIDO": "BARRIDO",
     "TRAPERO": "TRAPERO",
@@ -433,13 +276,11 @@ const DICCIONARIO_CORRECCION = {
     "VAPOR": "VAPOR",
     "QUIMICO": "QUÍMICO",
     "QUIMICA": "QUÍMICA",
-    "QUIMICOS": "QUÍMICOS",
     "SOLVENTE": "SOLVENTE",
-    "SOLVENTES": "SOLVENTES",
     "DESENGRASANTE": "DESENGRASANTE",
     "DETERGENTE": "DETERGENTE",
     
-    // 🧪 CORRECCIONES ORTOGRÁFICAS GENERALES
+    // 🧪 CORRECCIONES ORTOGRÁFICAS
     "ATRAVEZ": "A TRAVÉS",
     "ATRAVES": "A TRAVÉS",
     "ASERCAR": "ACERCAR",
@@ -465,26 +306,21 @@ const DICCIONARIO_CORRECCION = {
     "PRODUJO": "PRODUJO",
     "CONDUJO": "CONDUJO",
     
-    // 🔤 PALABRAS SIN TILDE → CON TILDE
+    // 🔤 PALABRAS CON TILDE
     "ACCION": "ACCIÓN",
-    "ACCIONES": "ACCIONES",
     "ADMINISTRACION": "ADMINISTRACIÓN",
     "APLICACION": "APLICACIÓN",
-    "APLICACIONES": "APLICACIONES",
     "ATENCION": "ATENCIÓN",
     "CAPACITACION": "CAPACITACIÓN",
     "CERTIFICACION": "CERTIFICACIÓN",
     "CLASIFICACION": "CLASIFICACIÓN",
     "COMUNICACION": "COMUNICACIÓN",
     "CONDICION": "CONDICIÓN",
-    "CONDICIONES": "CONDICIONES",
     "CONFIGURACION": "CONFIGURACIÓN",
     "CONSTRUCCION": "CONSTRUCCIÓN",
     "COORDINACION": "COORDINACIÓN",
     "CORRECION": "CORRECCIÓN",
-    "CORRECIONES": "CORRECCIONES",
     "DECISION": "DECISIÓN",
-    "DECISIONES": "DECISIONES",
     "DEFINICION": "DEFINICIÓN",
     "DIRECCION": "DIRECCIÓN",
     "DURACION": "DURACIÓN",
@@ -509,9 +345,7 @@ const DICCIONARIO_CORRECCION = {
     "MOTIVACION": "MOTIVACIÓN",
     "NOTIFICACION": "NOTIFICACIÓN",
     "OBSERVACION": "OBSERVACIÓN",
-    "OBSERVACIONES": "OBSERVACIONES",
     "OPERACION": "OPERACIÓN",
-    "OPERACIONES": "OPERACIONES",
     "ORGANIZACION": "ORGANIZACIÓN",
     "PARTICIPACION": "PARTICIPACIÓN",
     "PLANIFICACION": "PLANIFICACIÓN",
@@ -520,39 +354,28 @@ const DICCIONARIO_CORRECCION = {
     "PROGRAMACION": "PROGRAMACIÓN",
     "PRESENTACION": "PRESENTACIÓN",
     "RECOMENDACION": "RECOMENDACIÓN",
-    "RECOMENDACIONES": "RECOMENDACIONES",
     "RECUPERACION": "RECUPERACIÓN",
     "REHABILITACION": "REHABILITACIÓN",
     "RELACION": "RELACIÓN",
     "REPARACION": "REPARACIÓN",
-    "REPARACIONES": "REPARACIONES",
     "REVISION": "REVISIÓN",
-    "REVISIONES": "REVISIONES",
     "SEPARACION": "SEPARACIÓN",
     "SOLUCION": "SOLUCIÓN",
-    "SOLUCIONES": "SOLUCIONES",
     "SUPERVISION": "SUPERVISIÓN",
     "TRANSFERENCIA": "TRANSFERENCIA",
     "VERIFICACION": "VERIFICACIÓN",
-    "VERIFICACIONES": "VERIFICACIONES",
-    "VIBRACION": "VIBRACIÓN",
-    "VIBRACIONES": "VIBRACIONES"
+    "VIBRACION": "VIBRACIÓN"
 };
 
 // ==========================================
 // ✅ FUNCIÓN: AUTOCORREGIR TEXTO
-// Aplica las reglas del diccionario.
-// También limpia espacios dobles.
 // ==========================================
 function autocorregirTexto(texto) {
     if (!texto) return '';
     
     let resultado = String(texto).trim();
-    
-    // 1. Limpiar espacios dobles o múltiples
     resultado = resultado.replace(/\s+/g, ' ');
     
-    // 2. Aplicar el diccionario palabra por palabra
     const lineas = resultado.split('\n');
     const lineasCorregidas = lineas.map(linea => {
         return linea.split(/\s+/).map(palabra => {
@@ -565,6 +388,199 @@ function autocorregirTexto(texto) {
     });
     
     return lineasCorregidas.join('\n').trim();
+}
+
+// ==========================================
+// ✅ SISTEMA DE SUGERENCIAS TIPO GMAIL
+// ==========================================
+
+// Función: obtener sugerencias para la última palabra escrita
+function obtenerSugerencias(texto) {
+    if (!texto || texto.length < 2) return [];
+    
+    // Obtener la última palabra (después del último espacio)
+    const textoUpper = texto.toUpperCase().trim();
+    const palabras = textoUpper.split(/\s+/);
+    const ultimaPalabra = palabras[palabras.length - 1] || '';
+    
+    if (ultimaPalabra.length < 2) return [];
+    
+    const sugerencias = [];
+    const yaAgregadas = new Set();
+    
+    // 1. Coincidencia exacta en el diccionario
+    if (DICCIONARIO_CORRECCION[ultimaPalabra]) {
+        const sugerencia = DICCIONARIO_CORRECCION[ultimaPalabra];
+        if (sugerencia !== ultimaPalabra && !yaAgregadas.has(sugerencia)) {
+            sugerencias.push({
+                original: ultimaPalabra,
+                sugerencia: sugerencia,
+                tipo: 'correccion'
+            });
+            yaAgregadas.add(sugerencia);
+        }
+    }
+    
+    // 2. Coincidencias parciales (palabras que empiezan con lo escrito)
+    Object.keys(DICCIONARIO_CORRECCION).forEach(clave => {
+        if (sugerencias.length >= 5) return;
+        
+        // Si la clave empieza con lo que el usuario escribió
+        if (clave.startsWith(ultimaPalabra) && clave !== ultimaPalabra) {
+            const sugerencia = DICCIONARIO_CORRECCION[clave];
+            if (!yaAgregadas.has(sugerencia) && sugerencia !== ultimaPalabra) {
+                sugerencias.push({
+                    original: clave,
+                    sugerencia: sugerencia,
+                    tipo: 'sugerencia'
+                });
+                yaAgregadas.add(sugerencia);
+            }
+        }
+    });
+    
+    // 3. Coincidencias en cualquier parte (búsqueda más amplia)
+    if (sugerencias.length < 5) {
+        Object.keys(DICCIONARIO_CORRECCION).forEach(clave => {
+            if (sugerencias.length >= 5) return;
+            
+            // Si la clave contiene lo que el usuario escribió
+            if (clave.includes(ultimaPalabra) && !clave.startsWith(ultimaPalabra) && clave !== ultimaPalabra) {
+                const sugerencia = DICCIONARIO_CORRECCION[clave];
+                if (!yaAgregadas.has(sugerencia) && sugerencia !== ultimaPalabra) {
+                    sugerencias.push({
+                        original: clave,
+                        sugerencia: sugerencia,
+                        tipo: 'similar'
+                    });
+                    yaAgregadas.add(sugerencia);
+                }
+            }
+        });
+    }
+    
+    return sugerencias.slice(0, 5);
+}
+
+// Función: aplicar una sugerencia al texto
+function aplicarSugerencia(inputId, sugerencia, tipo) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    
+    let texto = input.value;
+    const textoUpper = texto.toUpperCase().trim();
+    const palabras = textoUpper.split(/\s+/);
+    const ultimaPalabra = palabras[palabras.length - 1] || '';
+    
+    // Reemplazar la última palabra con la sugerencia
+    // Preservar el texto original hasta la última palabra
+    const textoAntes = texto.substring(0, texto.toUpperCase().lastIndexOf(ultimaPalabra));
+    
+    input.value = textoAntes + sugerencia.sugerencia + ' ';
+    input.focus();
+    
+    // Colocar el cursor al final
+    const len = input.value.length;
+    if (input.setSelectionRange) {
+        input.setSelectionRange(len, len);
+    }
+    
+    // Ocultar sugerencias
+    ocultarSugerencias(inputId);
+}
+
+// Función: mostrar sugerencias para un input
+function mostrarSugerencias(inputId) {
+    const input = document.getElementById(inputId);
+    const box = document.getElementById('sugerencias-' + inputId);
+    
+    if (!input || !box) return;
+    
+    const sugerencias = obtenerSugerencias(input.value);
+    
+    if (sugerencias.length === 0) {
+        ocultarSugerencias(inputId);
+        return;
+    }
+    
+    // Renderizar sugerencias
+    box.innerHTML = '';
+    sugerencias.forEach((sug, index) => {
+        const item = document.createElement('div');
+        item.className = 'suggestion-item' + (index === 0 ? ' selected' : '');
+        item.innerHTML = `
+            <span class="suggestion-icon">✨</span>
+            <span class="suggestion-text">${sug.sugerencia}</span>
+            <span class="suggestion-hint">Tab</span>
+        `;
+        item.onclick = function() {
+            aplicarSugerencia(inputId, sug, sug.tipo);
+        };
+        box.appendChild(item);
+    });
+    
+    box.classList.add('active');
+}
+
+// Función: ocultar sugerencias
+function ocultarSugerencias(inputId) {
+    const box = document.getElementById('sugerencias-' + inputId);
+    if (box) {
+        box.classList.remove('active');
+    }
+}
+
+// Función: manejar teclado (Tab, Enter, Escape, Flechas)
+function manejarTecladoSugerencias(event, inputId) {
+    const box = document.getElementById('sugerencias-' + inputId);
+    if (!box || !box.classList.contains('active')) return;
+    
+    const items = box.querySelectorAll('.suggestion-item');
+    let selectedIndex = Array.from(items).findIndex(i => i.classList.contains('selected'));
+    
+    if (event.key === 'Tab' || event.key === 'Enter') {
+        event.preventDefault();
+        if (selectedIndex >= 0 && items[selectedIndex]) {
+            items[selectedIndex].click();
+        }
+    } else if (event.key === 'Escape') {
+        ocultarSugerencias(inputId);
+    } else if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        if (selectedIndex < items.length - 1) {
+            items[selectedIndex].classList.remove('selected');
+            items[selectedIndex + 1].classList.add('selected');
+        }
+    } else if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        if (selectedIndex > 0) {
+            items[selectedIndex].classList.remove('selected');
+            items[selectedIndex - 1].classList.add('selected');
+        }
+    }
+}
+
+// Función: inicializar sistema de sugerencias en un input
+function inicializarSugerencias(inputId) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    
+    // Al escribir, mostrar sugerencias
+    input.addEventListener('input', function() {
+        mostrarSugerencias(inputId);
+    });
+    
+    // Al presionar tecla
+    input.addEventListener('keydown', function(event) {
+        manejarTecladoSugerencias(event, inputId);
+    });
+    
+    // Al perder foco, ocultar (con delay para permitir clic)
+    input.addEventListener('blur', function() {
+        setTimeout(() => {
+            ocultarSugerencias(inputId);
+        }, 200);
+    });
 }
 
 // ESTADO GLOBAL
@@ -642,6 +658,11 @@ window.onload = function() {
         }
     });
     
+    // ✅ Inicializar sistema de sugerencias
+    inicializarSugerencias('f-descripcion');
+    inicializarSugerencias('f-area');
+    inicializarSugerencias('f-ejecutante');
+    
     renderTable([]);
     
     if (localStorage.getItem('isAdminLoggedIn') === 'true') {
@@ -662,6 +683,17 @@ window.onload = function() {
     if (yearEl) {
         yearEl.textContent = new Date().getFullYear();
     }
+    
+    // Cerrar sugerencias al hacer clic fuera
+    document.addEventListener('click', function(event) {
+        ['f-descripcion', 'f-area', 'f-ejecutante'].forEach(id => {
+            const input = document.getElementById(id);
+            const box = document.getElementById('sugerencias-' + id);
+            if (input && box && !input.contains(event.target) && !box.contains(event.target)) {
+                ocultarSugerencias(id);
+            }
+        });
+    });
 };
 
 // ==========================================
@@ -672,7 +704,7 @@ function closeWelcomeModal() {
 }
 
 // ==========================================
-// ✅ MOSTRAR MODAL DE AGRADECIMIENTO (con mensaje dinámico)
+// ✅ MOSTRAR MODAL DE AGRADECIMIENTO
 // ==========================================
 function showSuccessModal(esDiaSiguiente) {
     const modal = document.getElementById('success-modal');
@@ -722,7 +754,7 @@ function closeSuccessModal() {
 // ==========================================
 function showFieldHelp(field) {
     const helpTexts = {
-        'descripcion': 'Escribe una descripción clara y concisa de la actividad. El sistema corregirá automáticamente abreviaciones y errores comunes.',
+        'descripcion': 'Escribe una descripción clara y concisa. Verás sugerencias automáticas mientras escribes. Presiona Tab o haz clic para aplicarlas.',
         'tag': 'Escribe el TAG identificador del equipo. Ej: TAG-001.',
         'prog': 'Selecciona P si es Programada, o NP si es No Programada.',
         'estacion': 'Selecciona la estación donde se realizará la actividad.',
@@ -731,7 +763,7 @@ function showFieldHelp(field) {
         'ejecutante': 'Escribe los nombres, uno por línea.',
         'subarea': 'Selecciona la subárea a la que pertenece.',
         'fecha': 'La fecha se llena automáticamente al crear. Al editar, se puede cambiar.',
-        'area': 'Escribe el área o sistema general.'
+        'area': 'Escribe el área o sistema general. Verás sugerencias automáticas.'
     };
     document.getElementById('field-help-text').innerText = helpTexts[field] || 'Este campo es obligatorio.';
     document.getElementById('field-help-modal').style.display = 'flex';
@@ -1030,7 +1062,7 @@ function clearFilters() {
 }
 
 // ==========================================
-// MODAL CREAR (fecha de hoy)
+// MODAL CREAR
 // ==========================================
 function openModal() {
     document.getElementById('modal-title').innerText = 'Nueva Actividad';
@@ -1055,7 +1087,7 @@ function openModal() {
 }
 
 // ==========================================
-// ✅ MODAL CREAR - DÍA SIGUIENTE (fecha de mañana)
+// ✅ MODAL CREAR - DÍA SIGUIENTE
 // ==========================================
 function openModalDiaSiguiente() {
     const ahoraUTC = new Date();
@@ -1113,6 +1145,10 @@ function editRecord(id) {
 
 function closeModal() {
     document.getElementById('modal').style.display = 'none';
+    // Ocultar sugerencias al cerrar
+    ocultarSugerencias('f-descripcion');
+    ocultarSugerencias('f-area');
+    ocultarSugerencias('f-ejecutante');
 }
 
 // ==========================================
@@ -1169,7 +1205,7 @@ async function saveRecord() {
         const id = document.getElementById('record-id').value;
         const esDiaSiguiente = document.getElementById('record-id').dataset.diaSiguiente === 'true';
         
-        // ✅ Aplicar autocorrección a los campos de texto libre
+        // ✅ Aplicar autocorrección
         const descripcionCorregida = autocorregirTexto(document.getElementById('f-descripcion').value.toUpperCase());
         const areaCorregida = autocorregirTexto(document.getElementById('f-area').value.toUpperCase());
         
@@ -1211,13 +1247,6 @@ async function saveRecord() {
         console.log('ID:', id);
         console.log('Acción:', payload.accion);
         console.log('Día siguiente:', esDiaSiguiente);
-        
-        const descOriginal = document.getElementById('f-descripcion').value.toUpperCase().trim();
-        if (descOriginal !== descripcionCorregida && descripcionCorregida !== '') {
-            console.log('✨ Autocorrección aplicada:');
-            console.log('   Antes:', descOriginal);
-            console.log('   Después:', descripcionCorregida);
-        }
 
         await fetch(SCRIPT_URL, {
             method: 'POST',
@@ -1242,7 +1271,7 @@ async function saveRecord() {
 }
 
 // ==========================================
-// ELIMINAR (conservado por si se necesita después)
+// ELIMINAR (conservado)
 // ==========================================
 async function deleteRecord(id) {
     if (!confirm('¿Seguro que deseas eliminar esta actividad?')) return;
