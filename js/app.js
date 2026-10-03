@@ -1881,7 +1881,7 @@ async function deleteRecord(id) {
 }
 
 // ==========================================
-// EXPORTAR EXCEL
+// EXPORTAR EXCEL CON BLOQUES DE BORDE DOBLE
 // ==========================================
 function openExportModal() {
     document.getElementById('export-date-from').value = '';
@@ -1953,15 +1953,11 @@ function exportExcel() {
     
     const ws = XLSX.utils.aoa_to_sheet(aoaData);
     
-    // ✅ Borde simple para datos y fila 1
-    const borderSimple = {
-        top: { style: "thin", color: { rgb: "000000" } },
-        bottom: { style: "thin", color: { rgb: "000000" } },
-        left: { style: "thin", color: { rgb: "000000" } },
-        right: { style: "thin", color: { rgb: "000000" } }
-    };
+    // ==========================================
+    // ✅ ESTILOS DE BORDE
+    // ==========================================
     
-    // ✅ Borde DOBLE para encabezados (fila 2)
+    // Borde doble completo (para fila 1 y fila 2)
     const borderDoble = {
         top: { style: "double", color: { rgb: "000000" } },
         bottom: { style: "double", color: { rgb: "000000" } },
@@ -1969,11 +1965,15 @@ function exportExcel() {
         right: { style: "double", color: { rgb: "000000" } }
     };
     
-    // Fila 1: FECHA (borde simple)
-    ws['A1'].s = { fill: { fgColor: { rgb: "FF0000" } }, font: { color: { rgb: "FFFFFF" }, bold: true }, alignment: { horizontal: "center", vertical: "center" }, border: borderSimple };
-    ws['B1'].s = { fill: { fgColor: { rgb: "FF0000" } }, font: { color: { rgb: "FFFFFF" }, bold: true }, alignment: { horizontal: "center", vertical: "center" }, border: borderSimple };
+    // ==========================================
+    // ✅ FILA 1: FECHA (borde doble)
+    // ==========================================
+    ws['A1'].s = { fill: { fgColor: { rgb: "FF0000" } }, font: { color: { rgb: "FFFFFF" }, bold: true }, alignment: { horizontal: "center", vertical: "center" }, border: borderDoble };
+    ws['B1'].s = { fill: { fgColor: { rgb: "FF0000" } }, font: { color: { rgb: "FFFFFF" }, bold: true }, alignment: { horizontal: "center", vertical: "center" }, border: borderDoble };
     
-    // ✅ Fila 2: ENCABEZADOS con BORDE DOBLE
+    // ==========================================
+    // ✅ FILA 2: ENCABEZADOS (borde doble)
+    // ==========================================
     headers.forEach(function(h, i) {
         const cell = XLSX.utils.encode_cell({ r: 1, c: i });
         ws[cell].s = { 
@@ -1984,32 +1984,62 @@ function exportExcel() {
         };
     });
     
+    // ==========================================
+    // ✅ BLOQUES POR SUBÁREA CON BORDE DOBLE EXTERIOR
+    // ==========================================
     let areaStartRow = 2;
     subareasOrder.forEach(function(area) {
         const recordsOfArea = groupedData[area] || [];
         const totalRows = Math.max(rowsPerArea, recordsOfArea.length);
         const areaEndRow = areaStartRow + totalRows - 1;
         
+        // Combinar celdas de la columna A
         ws['!merges'] = ws['!merges'] || [];
         ws['!merges'].push({ s: { r: areaStartRow, c: 0 }, e: { r: areaEndRow, c: 0 } });
         
+        // Columna A (Subárea) - Borde izquierdo siempre doble
         for (let r = areaStartRow; r <= areaEndRow; r++) {
             const cell = XLSX.utils.encode_cell({ r: r, c: 0 });
             if (ws[cell]) {
-                ws[cell].s = { fill: { fgColor: { rgb: "FF0000" } }, font: { color: { rgb: "FFFFFF" }, bold: true, size: 10 }, alignment: { horizontal: "center", vertical: "center", wrapText: true }, border: borderSimple };
+                let borderA = {
+                    top: r === areaStartRow ? { style: "double", color: { rgb: "000000" } } : { style: "thin", color: { rgb: "000000" } },
+                    bottom: r === areaEndRow ? { style: "double", color: { rgb: "000000" } } : { style: "thin", color: { rgb: "000000" } },
+                    left: { style: "double", color: { rgb: "000000" } },
+                    right: { style: "thin", color: { rgb: "000000" } }
+                };
+                ws[cell].s = { 
+                    fill: { fgColor: { rgb: "FF0000" } }, 
+                    font: { color: { rgb: "FFFFFF" }, bold: true, size: 10 }, 
+                    alignment: { horizontal: "center", vertical: "center", wrapText: true }, 
+                    border: borderA 
+                };
             }
         }
+        
+        // Columnas B-I (Datos) con borde doble en los exteriores del bloque
+        for (let r = areaStartRow; r <= areaEndRow; r++) {
+            for (let c = 1; c < 9; c++) {
+                const cell = XLSX.utils.encode_cell({ r: r, c: c });
+                if (ws[cell]) {
+                    let borderCelda = {
+                        top: r === areaStartRow ? { style: "double", color: { rgb: "000000" } } : { style: "thin", color: { rgb: "000000" } },
+                        bottom: r === areaEndRow ? { style: "double", color: { rgb: "000000" } } : { style: "thin", color: { rgb: "000000" } },
+                        left: { style: "thin", color: { rgb: "000000" } },
+                        right: c === 8 ? { style: "double", color: { rgb: "000000" } } : { style: "thin", color: { rgb: "000000" } }
+                    };
+                    
+                    ws[cell].s = { 
+                        fill: { fgColor: { rgb: "FFFFFF" } }, 
+                        font: { color: { rgb: "000000" } }, 
+                        alignment: { horizontal: "left", vertical: "center", wrapText: true }, 
+                        border: borderCelda 
+                    };
+                }
+            }
+        }
+        
         areaStartRow = areaEndRow + 1;
     });
-    
-    for (let r = 2; r < aoaData.length; r++) {
-        for (let c = 1; c < 9; c++) {
-            const cell = XLSX.utils.encode_cell({ r: r, c: c });
-            if (ws[cell]) {
-                ws[cell].s = { fill: { fgColor: { rgb: "FFFFFF" } }, font: { color: { rgb: "000000" } }, alignment: { horizontal: "left", vertical: "center", wrapText: true }, border: borderSimple };
-            }
-        }
-    }
     
     ws['!cols'] = [{ wch: 15 }, { wch: 20 }, { wch: 50 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 25 }];
     ws['!rows'] = [{ hpt: 25 }, { hpt: 25 }];
