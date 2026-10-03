@@ -1881,7 +1881,7 @@ async function deleteRecord(id) {
 }
 
 // ==========================================
-// EXPORTAR EXCEL CON BLOQUES Y BORDES DOBLES
+// EXPORTAR EXCEL CON BLOQUES Y FILA EN BLANCO SEPARADORA
 // ==========================================
 function openExportModal() {
     document.getElementById('export-date-from').value = '';
@@ -1926,9 +1926,14 @@ function exportExcel() {
     const headers = ["AREA", "AREA O SISTEMA", "DESCRIPCION DE ACTIVIDAD", "TAG", "PROG/NO PROG", "ESTACION", "AVANCE", "OT", "EJECUTANTE"];
     const aoaData = [["FECHA", exportDate], headers];
     
-    subareasOrder.forEach(function(area) {
+    // ✅ Guardar el rango de cada bloque
+    const bloques = [];
+    
+    subareasOrder.forEach(function(area, indexArea) {
         const recordsOfArea = groupedData[area] || [];
         const totalRows = Math.max(rowsPerArea, recordsOfArea.length);
+        
+        const bloqueStart = aoaData.length;
         
         for (let i = 0; i < totalRows; i++) {
             const rec = recordsOfArea[i];
@@ -1948,6 +1953,14 @@ function exportExcel() {
             } else {
                 aoaData.push([area, '', '', '', '', '', '', '', '']);
             }
+        }
+        
+        const bloqueEnd = aoaData.length - 1;
+        bloques.push({ area: area, start: bloqueStart, end: bloqueEnd });
+        
+        // ✅ Agregar fila en blanco entre bloques (excepto el último)
+        if (indexArea < subareasOrder.length - 1) {
+            aoaData.push(['', '', '', '', '', '', '', '', '']);
         }
     });
     
@@ -1986,19 +1999,15 @@ function exportExcel() {
     // ==========================================
     // ✅ BLOQUES POR SUBÁREA CON BORDE DOBLE EXTERIOR
     // ==========================================
-    let areaStartRow = 2;
-    subareasOrder.forEach(function(area) {
-        const recordsOfArea = groupedData[area] || [];
-        const totalRows = Math.max(rowsPerArea, recordsOfArea.length);
-        const areaEndRow = areaStartRow + totalRows - 1;
+    bloques.forEach(function(bloque) {
+        const areaStartRow = bloque.start;
+        const areaEndRow = bloque.end;
         
         // Combinar celdas de la columna A
         ws['!merges'] = ws['!merges'] || [];
         ws['!merges'].push({ s: { r: areaStartRow, c: 0 }, e: { r: areaEndRow, c: 0 } });
         
-        // ==========================================
-        // ✅ COLUMNA A (Subárea) - Borde doble en TODOS los lados
-        // ==========================================
+        // COLUMNA A (Subárea) - Borde doble en TODOS los lados
         for (let r = areaStartRow; r <= areaEndRow; r++) {
             const cell = XLSX.utils.encode_cell({ r: r, c: 0 });
             if (ws[cell]) {
@@ -2017,9 +2026,7 @@ function exportExcel() {
             }
         }
         
-        // ==========================================
-        // ✅ COLUMNAS B-I (Datos) - Borde doble en exteriores del bloque
-        // ==========================================
+        // COLUMNAS B-I (Datos) - Borde doble en exteriores
         for (let r = areaStartRow; r <= areaEndRow; r++) {
             for (let c = 1; c < 9; c++) {
                 const cell = XLSX.utils.encode_cell({ r: r, c: c });
@@ -2040,8 +2047,6 @@ function exportExcel() {
                 }
             }
         }
-        
-        areaStartRow = areaEndRow + 1;
     });
     
     ws['!cols'] = [{ wch: 15 }, { wch: 20 }, { wch: 50 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 25 }];
