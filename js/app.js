@@ -5,13 +5,9 @@ const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby73wBltoTjoLSkhGoDM
 
 // ==========================================
 // ✅ DICCIONARIO DE AUTOCORRECCIÓN
-// Personalizado para INEMEC
 // ==========================================
 const DICCIONARIO_CORRECCION = {
     
-    // ==========================================
-    // MANTENIMIENTO Y VARIANTES
-    // ==========================================
     "MTTO": "MANTENIMIENTO",
     "MTT": "MANTENIMIENTO",
     "MANTTO": "MANTENIMIENTO",
@@ -28,9 +24,6 @@ const DICCIONARIO_CORRECCION = {
     "MANTENIMIENTOS": "MANTENIMIENTOS",
     "MANTE": "MANTENIMIENTO",
     
-    // ==========================================
-    // ABREVIACIONES GENERALES
-    // ==========================================
     "PREV": "PREVENTIVO",
     "CORR": "CORRECTIVO",
     "REV": "REVISIÓN",
@@ -104,9 +97,6 @@ const DICCIONARIO_CORRECCION = {
     "ACTIV": "ACTIVIDAD",
     "EMERG": "EMERGENCIA",
     
-    // ==========================================
-    // CORRECCIONES ORTOGRÁFICAS
-    // ==========================================
     "ELECTRICO": "ELÉCTRICO",
     "ELECTRICOS": "ELÉCTRICOS",
     "ELECTRICA": "ELÉCTRICA",
@@ -165,9 +155,6 @@ const DICCIONARIO_CORRECCION = {
     "TANES": "TANKS",
     "TANE": "TANK",
     
-    // ==========================================
-    // PALABRAS CON TILDE
-    // ==========================================
     "REPARACION": "REPARACIÓN",
     "REPARACIO": "REPARACIÓN",
     "CORRECION": "CORRECCIÓN",
@@ -261,9 +248,6 @@ const DICCIONARIO_CORRECCION = {
     "COEXISTENCIA": "COEXISTENCIA",
     "PREEXISTENCIA": "PREEXISTENCIA",
     
-    // ==========================================
-    // TÉRMINOS TÉCNICOS
-    // ==========================================
     "BOMBA": "BOMBA",
     "BOMBAS": "BOMBAS",
     "COMPRESOR": "COMPRESOR",
@@ -333,9 +317,6 @@ const DICCIONARIO_CORRECCION = {
     "PATRON": "PATRÓN",
     "ANALOGO": "ANÁLOGO",
     
-    // ==========================================
-    // ESTRUCTURAS Y HERRAMIENTAS
-    // ==========================================
     "ESTRUCTURA": "ESTRUCTURA",
     "SOPORTE": "SOPORTE",
     "PLACA": "PLACA",
@@ -357,9 +338,6 @@ const DICCIONARIO_CORRECCION = {
     "MAQUINA": "MÁQUINA",
     "MAQUINAS": "MÁQUINAS",
     
-    // ==========================================
-    // ÁREAS Y UBICACIONES
-    // ==========================================
     "TALLER": "TALLER",
     "TALLR": "TALLER",
     "CAMPAMENTO": "CAMPAMENTO",
@@ -375,9 +353,6 @@ const DICCIONARIO_CORRECCION = {
     "ZONA": "ZONA",
     "SECTOR": "SECTOR",
     
-    // ==========================================
-    // HSEQ Y SEGURIDAD
-    // ==========================================
     "AMBIENTAL": "AMBIENTAL",
     "CONTAMINACION": "CONTAMINACIÓN",
     "RESIDUO": "RESIDUO",
@@ -441,9 +416,6 @@ const DICCIONARIO_CORRECCION = {
     "LEY": "LEY",
     "DECRETO": "DECRETO",
     
-    // ==========================================
-    // 🏢 INSTALACIONES Y ÁREAS COMUNES
-    // ==========================================
     "CASETA": "CASETA",
     "CASETAS": "CASETAS",
     "CASA": "CASA",
@@ -512,9 +484,6 @@ const DICCIONARIO_CORRECCION = {
     "PISTA": "PISTA",
     "HELIPUERTO": "HELIPUERTO",
     
-    // ==========================================
-    // 🛣️ VÍAS Y EXTERIORES
-    // ==========================================
     "VIA": "VÍA",
     "VÍA": "VÍA",
     "VIAS": "VÍAS",
@@ -566,9 +535,6 @@ const DICCIONARIO_CORRECCION = {
     "PATIN": "PATÍN",
     "PATÍN": "PATÍN",
     
-    // ==========================================
-    // 👥 PERSONAS Y ROLES
-    // ==========================================
     "PERSONAL": "PERSONAL",
     "PERSONA": "PERSONA",
     "PERSONAS": "PERSONAS",
@@ -641,9 +607,6 @@ const DICCIONARIO_CORRECCION = {
     "AUDITOR": "AUDITOR",
     "AUDITORES": "AUDITORES",
     
-    // ==========================================
-    // 📦 OBJETOS Y MATERIALES
-    // ==========================================
     "CAJA": "CAJA",
     "CAJAS": "CAJAS",
     "CANECA": "CANECA",
@@ -706,9 +669,6 @@ const DICCIONARIO_CORRECCION = {
     "APAGADOR": "APAGADOR",
     "APAGADORES": "APAGADORES",
     
-    // ==========================================
-    // 🧴 ASEO Y LIMPIEZA
-    // ==========================================
     "JABON": "JABÓN",
     "JABÓN": "JABÓN",
     "JABONES": "JABONES",
@@ -757,9 +717,6 @@ const DICCIONARIO_CORRECCION = {
     "RELLENO": "RELLENO",
     "RELLENO SANITARIO": "RELLENO SANITARIO",
     
-    // ==========================================
-    // 📱 COMUNICACIÓN Y TECNOLOGÍA
-    // ==========================================
     "RADIO": "RADIO",
     "RADIOS": "RADIOS",
     "TELEFONO": "TELÉFONO",
@@ -800,9 +757,6 @@ const DICCIONARIO_CORRECCION = {
     "ENLACE": "ENLACE",
     "ENLACES": "ENLACES",
     
-    // ==========================================
-    // 📋 DOCUMENTOS COMUNES
-    // ==========================================
     "CARPETA": "CARPETA",
     "CARPETAS": "CARPETAS",
     "ARCHIVO": "ARCHIVO",
@@ -1562,6 +1516,10 @@ function openModal() {
     document.getElementById('f-fecha').style.cursor = 'not-allowed';
     document.getElementById('f-fecha').style.fontWeight = 'normal';
     
+    // ✅ Ocultar aviso de día siguiente
+    const aviso = document.getElementById('aviso-dia-siguiente');
+    if (aviso) aviso.style.display = 'none';
+    
     const textInputs = ['f-descripcion', 'f-tag', 'f-avance', 'f-ot', 'f-area'];
     textInputs.forEach(function(id) { document.getElementById(id).value = ''; });
     
@@ -1573,6 +1531,9 @@ function openModal() {
     document.getElementById('modal').style.display = 'flex';
 }
 
+// ==========================================
+// ✅ MODAL PROGRAMAR ACTIVIDAD PARA MAÑANA
+// ==========================================
 function openModalDiaSiguiente() {
     const ahoraUTC = new Date();
     const ahoraColombia = new Date(ahoraUTC.getTime() - (5 * 60 * 60 * 1000));
@@ -1585,8 +1546,12 @@ function openModalDiaSiguiente() {
     document.getElementById('f-fecha').style.backgroundColor = '#fef3c7';
     document.getElementById('f-fecha').style.fontWeight = 'bold';
     
-    document.getElementById('modal-title').innerText = '📅 Nueva Actividad - Día Siguiente';
+    document.getElementById('modal-title').innerText = '📅 Programar Actividad para Mañana';
     document.getElementById('record-id').dataset.diaSiguiente = 'true';
+    
+    // ✅ Mostrar aviso de programación anticipada
+    const aviso = document.getElementById('aviso-dia-siguiente');
+    if (aviso) aviso.style.display = 'block';
 }
 
 // ==========================================
@@ -1602,6 +1567,10 @@ function editRecord(id) {
     document.getElementById('modal-title').innerText = 'Editar Actividad';
     document.getElementById('record-id').value = id;
     document.getElementById('record-id').removeAttribute('data-dia-siguiente');
+    
+    // ✅ Ocultar aviso de día siguiente
+    const aviso = document.getElementById('aviso-dia-siguiente');
+    if (aviso) aviso.style.display = 'none';
     
     document.getElementById('f-descripcion').value = String(rec['Descripción'] || '').toUpperCase();
     document.getElementById('f-tag').value = String(rec['TAG'] || '').toUpperCase();

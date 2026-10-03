@@ -69,7 +69,7 @@
             </div>
 
             <button onclick="openModal()" class="btn-new">➕ Nueva Actividad</button>
-            <button onclick="openModalDiaSiguiente()" class="btn-today">📅 Día Siguiente</button>
+            <button onclick="openModalDiaSiguiente()" class="btn-today">📅 Programar Actividad para Mañana</button>
             <span id="user-message" style="color: #64748b; font-size: 0.9rem; align-self: center;">Seleccione subárea y rango de fechas para ver las actividades.</span>
         </div>
 
@@ -81,7 +81,7 @@
             <div id="admin-filters-content" class="filters-content">
                 <button onclick="setTodayFilterAdmin()" class="btn-today">📅 Hoy</button>
                 <button onclick="openModal()" class="btn-new">➕ Nueva Actividad</button>
-                <button onclick="openModalDiaSiguiente()" class="btn-today">📅 Día Siguiente</button>
+                <button onclick="openModalDiaSiguiente()" class="btn-today">📅 Programar Actividad para Mañana</button>
                 
                 <div class="search-box">
                     <input type="text" id="search-descripcion" placeholder="🔍 Buscar por descripción..." oninput="loadData()">
@@ -218,7 +218,7 @@
                 <li>Usa las fechas para filtrar por <strong>rango</strong>.</li>
                 <li>Haz clic en <strong>📅 Hoy</strong> para ver solo las actividades de hoy.</li>
                 <li>Pulsa <strong>➕ Nueva Actividad</strong> para crear una.</li>
-                <li>Pulsa <strong>📅 Día Siguiente</strong> para programar una actividad para mañana.</li>
+                <li>Pulsa <strong>📅 Programar Actividad para Mañana</strong> para dejar lista la actividad del día siguiente.</li>
                 <li>Mientras escribes, verás <strong>sugerencias de palabras técnicas</strong> debajo del campo. Presiona <strong>Tab</strong> o haz clic para aplicarlas.</li>
                 <li>Si necesitas ayuda, usa la <strong>🧹 Quitar filtro</strong> para reiniciar.</li>
             </ul>
@@ -233,6 +233,14 @@
             <span class="close" onclick="closeModal()">&times;</span>
             <h2 id="modal-title">Nueva Actividad</h2>
             <input type="hidden" id="record-id">
+            
+            <!-- ✅ AVISO DE PROGRAMACIÓN ANTICIPADA -->
+            <div id="aviso-dia-siguiente" style="display: none; background: #fef3c7; border-left: 4px solid #f59e0b; padding: 10px 15px; border-radius: 6px; margin-bottom: 15px;">
+                <strong style="color: #92400e;">📅 Programación Anticipada</strong>
+                <p style="margin: 4px 0 0 0; font-size: 0.85rem; color: #78350f;">
+                    Esta actividad se registrará con la fecha de <strong>mañana</strong>. Podrás verla y editarla al día siguiente.
+                </p>
+            </div>
             
             <div class="form-grid">
                 <div class="full-width">
@@ -375,7 +383,7 @@
                     🔄 <strong>Evita duplicados:</strong> Si ya ves tu actividad en la lista, <u>NO</u> la vuelvas a crear. Si necesitas cambiar algo, usa el botón <strong>Editar</strong>.
                 </p>
                 <p style="margin-bottom: 10px; font-size: 0.9rem;">
-                    📅 <strong>Programa con anticipación:</strong> Usa el botón <strong>📅 Día Siguiente</strong> para dejar lista la actividad de mañana.
+                    📅 <strong>Programa con anticipación:</strong> Usa el botón <strong>📅 Programar Actividad para Mañana</strong> para dejar lista la actividad del día siguiente.
                 </p>
                 <p style="margin-bottom: 10px; font-size: 0.9rem;">
                     ✨ <strong>Sugerencias inteligentes:</strong> Mientras escribes, verás sugerencias de palabras técnicas. Presiona <strong>Tab</strong> o haz clic para aplicarlas.
