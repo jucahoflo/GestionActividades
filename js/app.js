@@ -1028,7 +1028,6 @@ function inicializarFAB() {
         fab.classList.remove('visible');
     }
     
-    // Actualizar al cambiar tamaño
     window.addEventListener('resize', function() {
         if (esDispositivoMovil()) {
             fab.classList.add('visible');
@@ -1072,10 +1071,8 @@ function inicializarGestosTactiles() {
         const deltaX = touch.clientX - touchStartX;
         const deltaY = touch.clientY - touchStartY;
         
-        // Si es un scroll vertical, ignorar
         if (Math.abs(deltaY) > Math.abs(deltaX)) return;
         
-        // Si es un swipe horizontal hacia la izquierda
         if (deltaX < -10 && deltaX > -120) {
             swiping = true;
             filaActual.classList.add('swiping');
@@ -1098,7 +1095,6 @@ function inicializarGestosTactiles() {
         
         filaActual.classList.remove('swiping');
         
-        // Si el swipe es suficiente (más de 80px y menos de 500ms) → Editar
         if (swiping && deltaX < -80 && tiempoTranscurrido < 800) {
             const editBtn = filaActual.querySelector('.btn-edit');
             if (editBtn) {
@@ -1106,7 +1102,6 @@ function inicializarGestosTactiles() {
             }
         }
         
-        // Resetear
         setTimeout(function() {
             if (filaActual) {
                 filaActual.style.transform = '';
@@ -1132,7 +1127,6 @@ function inicializarPullToRefresh() {
     const umbral = 80;
     
     document.addEventListener('touchstart', function(e) {
-        // Solo si está en la parte superior de la página
         if (window.scrollY === 0) {
             startY = e.touches[0].clientY;
             pulling = true;
@@ -1155,7 +1149,6 @@ function inicializarPullToRefresh() {
         const deltaY = e.changedTouches[0].clientY - startY;
         
         if (deltaY > umbral && window.scrollY === 0) {
-            // Ejecutar recarga
             loadData();
             
             setTimeout(function() {
@@ -1251,13 +1244,8 @@ window.onload = function() {
     inicializarSugerencias('f-area');
     inicializarSugerencias('f-ejecutante');
     
-    // ✅ Inicializar FAB
     inicializarFAB();
-    
-    // ✅ Inicializar gestos táctiles
     inicializarGestosTactiles();
-    
-    // ✅ Inicializar Pull to Refresh
     inicializarPullToRefresh();
     
     renderTable([]);
@@ -1964,19 +1952,36 @@ function exportExcel() {
     });
     
     const ws = XLSX.utils.aoa_to_sheet(aoaData);
-    const borderStyle = {
+    
+    // ✅ Borde simple para datos y fila 1
+    const borderSimple = {
         top: { style: "thin", color: { rgb: "000000" } },
         bottom: { style: "thin", color: { rgb: "000000" } },
         left: { style: "thin", color: { rgb: "000000" } },
         right: { style: "thin", color: { rgb: "000000" } }
     };
     
-    ws['A1'].s = { fill: { fgColor: { rgb: "FF0000" } }, font: { color: { rgb: "FFFFFF" }, bold: true }, alignment: { horizontal: "center", vertical: "center" }, border: borderStyle };
-    ws['B1'].s = { fill: { fgColor: { rgb: "FF0000" } }, font: { color: { rgb: "FFFFFF" }, bold: true }, alignment: { horizontal: "center", vertical: "center" }, border: borderStyle };
+    // ✅ Borde DOBLE para encabezados (fila 2)
+    const borderDoble = {
+        top: { style: "double", color: { rgb: "000000" } },
+        bottom: { style: "double", color: { rgb: "000000" } },
+        left: { style: "double", color: { rgb: "000000" } },
+        right: { style: "double", color: { rgb: "000000" } }
+    };
     
+    // Fila 1: FECHA (borde simple)
+    ws['A1'].s = { fill: { fgColor: { rgb: "FF0000" } }, font: { color: { rgb: "FFFFFF" }, bold: true }, alignment: { horizontal: "center", vertical: "center" }, border: borderSimple };
+    ws['B1'].s = { fill: { fgColor: { rgb: "FF0000" } }, font: { color: { rgb: "FFFFFF" }, bold: true }, alignment: { horizontal: "center", vertical: "center" }, border: borderSimple };
+    
+    // ✅ Fila 2: ENCABEZADOS con BORDE DOBLE
     headers.forEach(function(h, i) {
         const cell = XLSX.utils.encode_cell({ r: 1, c: i });
-        ws[cell].s = { fill: { fgColor: { rgb: "FF0000" } }, font: { color: { rgb: "FFFFFF" }, bold: true }, alignment: { horizontal: "center", vertical: "center" }, border: borderStyle };
+        ws[cell].s = { 
+            fill: { fgColor: { rgb: "FF0000" } }, 
+            font: { color: { rgb: "FFFFFF" }, bold: true }, 
+            alignment: { horizontal: "center", vertical: "center" }, 
+            border: borderDoble 
+        };
     });
     
     let areaStartRow = 2;
@@ -1991,7 +1996,7 @@ function exportExcel() {
         for (let r = areaStartRow; r <= areaEndRow; r++) {
             const cell = XLSX.utils.encode_cell({ r: r, c: 0 });
             if (ws[cell]) {
-                ws[cell].s = { fill: { fgColor: { rgb: "FF0000" } }, font: { color: { rgb: "FFFFFF" }, bold: true, size: 10 }, alignment: { horizontal: "center", vertical: "center", wrapText: true }, border: borderStyle };
+                ws[cell].s = { fill: { fgColor: { rgb: "FF0000" } }, font: { color: { rgb: "FFFFFF" }, bold: true, size: 10 }, alignment: { horizontal: "center", vertical: "center", wrapText: true }, border: borderSimple };
             }
         }
         areaStartRow = areaEndRow + 1;
@@ -2001,7 +2006,7 @@ function exportExcel() {
         for (let c = 1; c < 9; c++) {
             const cell = XLSX.utils.encode_cell({ r: r, c: c });
             if (ws[cell]) {
-                ws[cell].s = { fill: { fgColor: { rgb: "FFFFFF" } }, font: { color: { rgb: "000000" } }, alignment: { horizontal: "left", vertical: "center", wrapText: true }, border: borderStyle };
+                ws[cell].s = { fill: { fgColor: { rgb: "FFFFFF" } }, font: { color: { rgb: "000000" } }, alignment: { horizontal: "left", vertical: "center", wrapText: true }, border: borderSimple };
             }
         }
     }
