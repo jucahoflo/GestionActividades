@@ -18,7 +18,7 @@
             </div>
 
             <div class="mascot-container">
-                <svg class="gear-large" viewBox="0 0 100 100" width="80" height="80" fill="none" stroke="#2563eb" stroke-width="6">
+                <svg class="gear-large" viewBox="0 0 100 100" width="80" height="80" fill="none" stroke="#93c5fd" stroke-width="6">
                     <path d="M50,30 a20,20 0 1,0 0.001,0 Z M50,38 a12,12 0 1,1 -0.001,0 Z M43,18 L57,18 L59,25 L69,31 L76,28 L84,36 L81,43 L84,56 L78,60 L78,71 L70,75 L63,71 L51,72 L45,77 L37,72 L34,65 L26,61 L26,50 L30,44 L26,34 L34,28 L41,30 Z"/>
                 </svg>
                 <svg class="mechanic-figure" viewBox="0 0 120 120" width="100" height="100">
@@ -129,6 +129,11 @@
             </div>
         </div>
 
+        <div id="pull-to-refresh-indicator" class="pull-to-refresh">
+            <div class="pull-to-refresh-icon">🔄</div>
+            <span class="pull-to-refresh-text">Suelta para actualizar</span>
+        </div>
+
         <table id="activity-table">
             <thead>
                 <tr>
@@ -164,6 +169,10 @@
             </div>
         </footer>
     </div>
+
+    <button id="fab-new-activity" class="fab-button" onclick="openModal()" title="Nueva Actividad">
+        <span>➕</span>
+    </button>
 
     <div id="admin-login-modal" class="modal">
         <div class="modal-content" style="max-width: 350px;">
@@ -222,6 +231,7 @@
                 <li>Pulsa <strong>➕ Nueva Actividad</strong> para crear una.</li>
                 <li>Pulsa <strong>📅 Programar Actividad para Mañana</strong> para dejar lista la actividad del día siguiente.</li>
                 <li>Mientras escribes, verás <strong>sugerencias de palabras técnicas</strong> debajo del campo. Presiona <strong>Tab</strong> o haz clic para aplicarlas.</li>
+                <li><strong>En móvil:</strong> Desliza una fila hacia la izquierda para editar rápido. También puedes deslizar hacia abajo para actualizar.</li>
                 <li>Si necesitas ayuda, usa la <strong>🧹 Quitar filtro</strong> para reiniciar.</li>
             </ul>
             <div class="modal-actions">
@@ -389,6 +399,9 @@
                 </p>
                 <p style="margin-bottom: 10px; font-size: 0.9rem;">
                     ✨ <strong>Sugerencias inteligentes:</strong> Mientras escribes, verás sugerencias de palabras técnicas. Presiona <strong>Tab</strong> o haz clic para aplicarlas.
+                </p>
+                <p style="margin-bottom: 10px; font-size: 0.9rem;">
+                    👆 <strong>En móvil:</strong> Desliza una fila hacia la izquierda para editarla rápido. Desliza la página hacia abajo para actualizar.
                 </p>
                 <p style="font-size: 0.9rem;">
                     💾 <strong>Confirma tu guardado:</strong> Al guardar, espera el mensaje de confirmación antes de cerrar la ventana.

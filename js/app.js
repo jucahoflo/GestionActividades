@@ -7,7 +7,6 @@ const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby73wBltoTjoLSkhGoDM
 // ✅ DICCIONARIO DE AUTOCORRECCIÓN
 // ==========================================
 const DICCIONARIO_CORRECCION = {
-    
     "MTTO": "MANTENIMIENTO",
     "MTT": "MANTENIMIENTO",
     "MANTTO": "MANTENIMIENTO",
@@ -23,7 +22,6 @@ const DICCIONARIO_CORRECCION = {
     "MANTENIMIENT": "MANTENIMIENTO",
     "MANTENIMIENTOS": "MANTENIMIENTOS",
     "MANTE": "MANTENIMIENTO",
-    
     "PREV": "PREVENTIVO",
     "CORR": "CORRECTIVO",
     "REV": "REVISIÓN",
@@ -96,7 +94,6 @@ const DICCIONARIO_CORRECCION = {
     "ACT": "ACTIVIDAD",
     "ACTIV": "ACTIVIDAD",
     "EMERG": "EMERGENCIA",
-    
     "ELECTRICO": "ELÉCTRICO",
     "ELECTRICOS": "ELÉCTRICOS",
     "ELECTRICA": "ELÉCTRICA",
@@ -154,7 +151,6 @@ const DICCIONARIO_CORRECCION = {
     "SWICHT": "SWITCH",
     "TANES": "TANKS",
     "TANE": "TANK",
-    
     "REPARACION": "REPARACIÓN",
     "REPARACIO": "REPARACIÓN",
     "CORRECION": "CORRECCIÓN",
@@ -164,7 +160,6 @@ const DICCIONARIO_CORRECCION = {
     "REVISIO": "REVISIÓN",
     "DIAGNOSTICO": "DIAGNÓSTICO",
     "DIAGNOSTICOS": "DIAGNÓSTICOS",
-    "DOCUMENTACION": "DOCUMENTACIÓN",
     "INFORMACION": "INFORMACIÓN",
     "COMUNICACION": "COMUNICACIÓN",
     "UBICACION": "UBICACIÓN",
@@ -247,7 +242,6 @@ const DICCIONARIO_CORRECCION = {
     "INCONSISTENCIA": "INCONSISTENCIA",
     "COEXISTENCIA": "COEXISTENCIA",
     "PREEXISTENCIA": "PREEXISTENCIA",
-    
     "BOMBA": "BOMBA",
     "BOMBAS": "BOMBAS",
     "COMPRESOR": "COMPRESOR",
@@ -316,7 +310,6 @@ const DICCIONARIO_CORRECCION = {
     "MEDIDORES": "MEDIDORES",
     "PATRON": "PATRÓN",
     "ANALOGO": "ANÁLOGO",
-    
     "ESTRUCTURA": "ESTRUCTURA",
     "SOPORTE": "SOPORTE",
     "PLACA": "PLACA",
@@ -337,7 +330,6 @@ const DICCIONARIO_CORRECCION = {
     "HERRAMIENTAS": "HERRAMIENTAS",
     "MAQUINA": "MÁQUINA",
     "MAQUINAS": "MÁQUINAS",
-    
     "TALLER": "TALLER",
     "TALLR": "TALLER",
     "CAMPAMENTO": "CAMPAMENTO",
@@ -352,7 +344,6 @@ const DICCIONARIO_CORRECCION = {
     "AREA": "ÁREA",
     "ZONA": "ZONA",
     "SECTOR": "SECTOR",
-    
     "AMBIENTAL": "AMBIENTAL",
     "CONTAMINACION": "CONTAMINACIÓN",
     "RESIDUO": "RESIDUO",
@@ -367,7 +358,6 @@ const DICCIONARIO_CORRECCION = {
     "PELIGRO": "PELIGRO",
     "ACCIDENTE": "ACCIDENTE",
     "INCIDENTE": "INCIDENTE",
-    "EMERGENCIA": "EMERGENCIA",
     "EVACUACION": "EVACUACIÓN",
     "ELEMENTO": "ELEMENTO",
     "CASCO": "CASCO",
@@ -415,7 +405,6 @@ const DICCIONARIO_CORRECCION = {
     "NORMATIVA": "NORMATIVA",
     "LEY": "LEY",
     "DECRETO": "DECRETO",
-    
     "CASETA": "CASETA",
     "CASETAS": "CASETAS",
     "CASA": "CASA",
@@ -483,7 +472,6 @@ const DICCIONARIO_CORRECCION = {
     "AERÓDROMO": "AERÓDROMO",
     "PISTA": "PISTA",
     "HELIPUERTO": "HELIPUERTO",
-    
     "VIA": "VÍA",
     "VÍA": "VÍA",
     "VIAS": "VÍAS",
@@ -534,7 +522,6 @@ const DICCIONARIO_CORRECCION = {
     "CORREDORES": "CORREDORES",
     "PATIN": "PATÍN",
     "PATÍN": "PATÍN",
-    
     "PERSONAL": "PERSONAL",
     "PERSONA": "PERSONA",
     "PERSONAS": "PERSONAS",
@@ -606,7 +593,6 @@ const DICCIONARIO_CORRECCION = {
     "INSPECTORES": "INSPECTORES",
     "AUDITOR": "AUDITOR",
     "AUDITORES": "AUDITORES",
-    
     "CAJA": "CAJA",
     "CAJAS": "CAJAS",
     "CANECA": "CANECA",
@@ -668,7 +654,6 @@ const DICCIONARIO_CORRECCION = {
     "INTERRUPTORES": "INTERRUPTORES",
     "APAGADOR": "APAGADOR",
     "APAGADORES": "APAGADORES",
-    
     "JABON": "JABÓN",
     "JABÓN": "JABÓN",
     "JABONES": "JABONES",
@@ -716,7 +701,6 @@ const DICCIONARIO_CORRECCION = {
     "CONTAMINADOS": "CONTAMINADOS",
     "RELLENO": "RELLENO",
     "RELLENO SANITARIO": "RELLENO SANITARIO",
-    
     "RADIO": "RADIO",
     "RADIOS": "RADIOS",
     "TELEFONO": "TELÉFONO",
@@ -756,7 +740,6 @@ const DICCIONARIO_CORRECCION = {
     "SEÑALES": "SEÑALES",
     "ENLACE": "ENLACE",
     "ENLACES": "ENLACES",
-    
     "CARPETA": "CARPETA",
     "CARPETAS": "CARPETAS",
     "ARCHIVO": "ARCHIVO",
@@ -1024,6 +1007,170 @@ function inicializarSugerencias(inputId) {
 }
 
 // ==========================================
+// ✅ DETECTAR SI ES MÓVIL
+// ==========================================
+function esDispositivoMovil() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
+        || window.innerWidth <= 768
+        || ('ontouchstart' in window);
+}
+
+// ==========================================
+// ✅ BOTÓN FLOTANTE (FAB)
+// ==========================================
+function inicializarFAB() {
+    const fab = document.getElementById('fab-new-activity');
+    if (!fab) return;
+    
+    if (esDispositivoMovil()) {
+        fab.classList.add('visible');
+    } else {
+        fab.classList.remove('visible');
+    }
+    
+    // Actualizar al cambiar tamaño
+    window.addEventListener('resize', function() {
+        if (esDispositivoMovil()) {
+            fab.classList.add('visible');
+        } else {
+            fab.classList.remove('visible');
+        }
+    });
+}
+
+// ==========================================
+// ✅ GESTOS TÁCTILES - SWIPE EN FILAS
+// ==========================================
+function inicializarGestosTactiles() {
+    if (!esDispositivoMovil()) return;
+    
+    const tbody = document.getElementById('table-body');
+    if (!tbody) return;
+    
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchStartTime = 0;
+    let filaActual = null;
+    let swiping = false;
+    
+    tbody.addEventListener('touchstart', function(e) {
+        const fila = e.target.closest('tr');
+        if (!fila) return;
+        
+        const touch = e.touches[0];
+        touchStartX = touch.clientX;
+        touchStartY = touch.clientY;
+        touchStartTime = Date.now();
+        filaActual = fila;
+        swiping = false;
+    }, { passive: true });
+    
+    tbody.addEventListener('touchmove', function(e) {
+        if (!filaActual) return;
+        
+        const touch = e.touches[0];
+        const deltaX = touch.clientX - touchStartX;
+        const deltaY = touch.clientY - touchStartY;
+        
+        // Si es un scroll vertical, ignorar
+        if (Math.abs(deltaY) > Math.abs(deltaX)) return;
+        
+        // Si es un swipe horizontal hacia la izquierda
+        if (deltaX < -10 && deltaX > -120) {
+            swiping = true;
+            filaActual.classList.add('swiping');
+            filaActual.style.transform = 'translateX(' + deltaX + 'px)';
+            
+            if (deltaX < -50) {
+                filaActual.classList.add('swipe-left');
+            } else {
+                filaActual.classList.remove('swipe-left');
+            }
+        }
+    }, { passive: true });
+    
+    tbody.addEventListener('touchend', function(e) {
+        if (!filaActual) return;
+        
+        const touch = e.changedTouches[0];
+        const deltaX = touch.clientX - touchStartX;
+        const tiempoTranscurrido = Date.now() - touchStartTime;
+        
+        filaActual.classList.remove('swiping');
+        
+        // Si el swipe es suficiente (más de 80px y menos de 500ms) → Editar
+        if (swiping && deltaX < -80 && tiempoTranscurrido < 800) {
+            const editBtn = filaActual.querySelector('.btn-edit');
+            if (editBtn) {
+                editBtn.click();
+            }
+        }
+        
+        // Resetear
+        setTimeout(function() {
+            if (filaActual) {
+                filaActual.style.transform = '';
+                filaActual.classList.remove('swipe-left');
+            }
+            filaActual = null;
+            swiping = false;
+        }, 150);
+    }, { passive: true });
+}
+
+// ==========================================
+// ✅ PULL TO REFRESH
+// ==========================================
+function inicializarPullToRefresh() {
+    if (!esDispositivoMovil()) return;
+    
+    const indicador = document.getElementById('pull-to-refresh-indicator');
+    if (!indicador) return;
+    
+    let startY = 0;
+    let pulling = false;
+    const umbral = 80;
+    
+    document.addEventListener('touchstart', function(e) {
+        // Solo si está en la parte superior de la página
+        if (window.scrollY === 0) {
+            startY = e.touches[0].clientY;
+            pulling = true;
+        }
+    }, { passive: true });
+    
+    document.addEventListener('touchmove', function(e) {
+        if (!pulling) return;
+        
+        const deltaY = e.touches[0].clientY - startY;
+        
+        if (deltaY > umbral && window.scrollY === 0) {
+            indicador.classList.add('visible');
+        }
+    }, { passive: true });
+    
+    document.addEventListener('touchend', function(e) {
+        if (!pulling) return;
+        
+        const deltaY = e.changedTouches[0].clientY - startY;
+        
+        if (deltaY > umbral && window.scrollY === 0) {
+            // Ejecutar recarga
+            loadData();
+            
+            setTimeout(function() {
+                indicador.classList.remove('visible');
+            }, 1000);
+        } else {
+            indicador.classList.remove('visible');
+        }
+        
+        pulling = false;
+        startY = 0;
+    }, { passive: true });
+}
+
+// ==========================================
 // ESTADO GLOBAL
 // ==========================================
 let allRecords = [];
@@ -1103,6 +1250,15 @@ window.onload = function() {
     inicializarSugerencias('f-descripcion');
     inicializarSugerencias('f-area');
     inicializarSugerencias('f-ejecutante');
+    
+    // ✅ Inicializar FAB
+    inicializarFAB();
+    
+    // ✅ Inicializar gestos táctiles
+    inicializarGestosTactiles();
+    
+    // ✅ Inicializar Pull to Refresh
+    inicializarPullToRefresh();
     
     renderTable([]);
     
