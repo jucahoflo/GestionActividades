@@ -1366,9 +1366,9 @@ function loadData() {
             }
             
             const subareasOrder = [
-                "MECANICA", "INSTRUMENTACIÓN", "ELÉCTRICO", "VALVULAS PSV Y PVV",
-                "A&C", "CBM", "VSD", "FACILIDADES", "OBREROS DE PATIO",
-                "CAMPAMENTERO", "HSEQ"
+                "MECANICA", "INSTRUMENTACIÓN", "CANVAS INSTRUMENT", "ELÉCTRICO", 
+                "VALVULAS PSV Y PVV", "A&C", "CBM", "VSD", "FACILIDADES", 
+                "OBREROS DE PATIO", "CAMPAMENTERO", "HSEQ"
             ];
             
             filtered.sort(function(a, b) {
@@ -1516,7 +1516,6 @@ function openModal() {
     document.getElementById('f-fecha').style.cursor = 'not-allowed';
     document.getElementById('f-fecha').style.fontWeight = 'normal';
     
-    // ✅ Ocultar aviso de día siguiente
     const aviso = document.getElementById('aviso-dia-siguiente');
     if (aviso) aviso.style.display = 'none';
     
@@ -1549,7 +1548,6 @@ function openModalDiaSiguiente() {
     document.getElementById('modal-title').innerText = '📅 Programar Actividad para Mañana';
     document.getElementById('record-id').dataset.diaSiguiente = 'true';
     
-    // ✅ Mostrar aviso de programación anticipada
     const aviso = document.getElementById('aviso-dia-siguiente');
     if (aviso) aviso.style.display = 'block';
 }
@@ -1568,7 +1566,6 @@ function editRecord(id) {
     document.getElementById('record-id').value = id;
     document.getElementById('record-id').removeAttribute('data-dia-siguiente');
     
-    // ✅ Ocultar aviso de día siguiente
     const aviso = document.getElementById('aviso-dia-siguiente');
     if (aviso) aviso.style.display = 'none';
     
@@ -1767,9 +1764,9 @@ function exportExcel() {
     }
     
     const subareasOrder = [
-        "MECANICA", "INSTRUMENTACIÓN", "ELÉCTRICO", "VALVULAS PSV Y PVV",
-        "A&C", "CBM", "VSD", "FACILIDADES", "OBREROS DE PATIO",
-        "CAMPAMENTERO", "HSEQ"
+        "MECANICA", "INSTRUMENTACIÓN", "CANVAS INSTRUMENT", "ELÉCTRICO", 
+        "VALVULAS PSV Y PVV", "A&C", "CBM", "VSD", "FACILIDADES", 
+        "OBREROS DE PATIO", "CAMPAMENTERO", "HSEQ"
     ];
     
     const groupedData = {};
