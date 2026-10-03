@@ -1881,7 +1881,7 @@ async function deleteRecord(id) {
 }
 
 // ==========================================
-// EXPORTAR EXCEL CON BLOQUES DE BORDE DOBLE
+// EXPORTAR EXCEL CON BLOQUES Y BORDES DOBLES
 // ==========================================
 function openExportModal() {
     document.getElementById('export-date-from').value = '';
@@ -1957,7 +1957,6 @@ function exportExcel() {
     // ✅ ESTILOS DE BORDE
     // ==========================================
     
-    // Borde doble completo (para fila 1 y fila 2)
     const borderDoble = {
         top: { style: "double", color: { rgb: "000000" } },
         bottom: { style: "double", color: { rgb: "000000" } },
@@ -1997,7 +1996,9 @@ function exportExcel() {
         ws['!merges'] = ws['!merges'] || [];
         ws['!merges'].push({ s: { r: areaStartRow, c: 0 }, e: { r: areaEndRow, c: 0 } });
         
-        // Columna A (Subárea) - Borde izquierdo siempre doble
+        // ==========================================
+        // ✅ COLUMNA A (Subárea) - Borde doble en TODOS los lados
+        // ==========================================
         for (let r = areaStartRow; r <= areaEndRow; r++) {
             const cell = XLSX.utils.encode_cell({ r: r, c: 0 });
             if (ws[cell]) {
@@ -2005,7 +2006,7 @@ function exportExcel() {
                     top: r === areaStartRow ? { style: "double", color: { rgb: "000000" } } : { style: "thin", color: { rgb: "000000" } },
                     bottom: r === areaEndRow ? { style: "double", color: { rgb: "000000" } } : { style: "thin", color: { rgb: "000000" } },
                     left: { style: "double", color: { rgb: "000000" } },
-                    right: { style: "thin", color: { rgb: "000000" } }
+                    right: { style: "double", color: { rgb: "000000" } }
                 };
                 ws[cell].s = { 
                     fill: { fgColor: { rgb: "FF0000" } }, 
@@ -2016,7 +2017,9 @@ function exportExcel() {
             }
         }
         
-        // Columnas B-I (Datos) con borde doble en los exteriores del bloque
+        // ==========================================
+        // ✅ COLUMNAS B-I (Datos) - Borde doble en exteriores del bloque
+        // ==========================================
         for (let r = areaStartRow; r <= areaEndRow; r++) {
             for (let c = 1; c < 9; c++) {
                 const cell = XLSX.utils.encode_cell({ r: r, c: c });
